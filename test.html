@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+<head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/jspdf@1.5.3/dist/jspdf.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
+
+<body style="height: 100%;">
+    <iframe frameborder="1" width="100%" height="100%"></iframe>
+    <script>
+        $(document).ready(function() {
+            var pdf = new jsPDF("p", "mm", "a4");
+
+            // Test text
+            pdf.setFontSize(40);
+            pdf.text(20, 20, "Hello world");
+
+            // test rectangle
+            // pdf.rect(50, 50, 20, 10);
+
+
+            // Addresse gauche
+            pdf.autoTable({
+                startY: 53,
+                tableWidth: 'wrap',
+                margin: {
+                    left: 22
+                },
+                styles: {
+                    fillColor: [255, 255, 255],
+                    cellPadding: 0.5,
+                },
+                alternateRowStyles: {
+                    fillColor: [255, 255, 255],
+                },
+                body: [
+                    [{
+                        content: "Adresse du client",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    ["Etude MCE Avocats"],
+                    ["Grand Chêne 1-3"],
+                    ["Case postal 6868"],
+                    ["1002 Lausanne"]
+                ]
+            });
+
+            pdf.autoTable({
+                startY: 15,
+                tableWidth: 'wrap',
+                margin: {
+                    left: 155,
+                },
+                styles: {
+                    fillColor: [255, 255, 255],
+                    cellPadding: 0.5,
+                },
+                alternateRowStyles: {
+                    fillColor: [255, 255, 255],
+                },
+                body: [
+                    [{
+                        content: "N° de facture",
+                        colSpan: 2,
+                        styles: {
+                            fontStyle: 'bold',
+                            halign: 'right'
+                        }
+                    }],
+                    [{
+                        content: '920030174',
+                        colSpan: 2,
+                        styles: {
+                            fontStyle: 'bold',
+                            halign: 'right',
+                            textColor: '#1750a0'
+                        }
+                    }],
+                    [{
+                        content: "Date d'émission:"
+                    }, {
+                        content: '17.03.2020',
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "Échéance:",
+                        styles: {
+                            halign: 'right',
+                        }
+                    }, {
+                        content: '16.04.2020',
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "CHE-631.761 TVA",
+                        colSpan: 2,
+                        styles: {
+                            halign: 'right',
+                        }
+
+                    }]
+                ]
+            });
+
+            pdf.addPage();
+
+            // test table
+            // pdf.autoTable({
+            //     startY: 30,
+            //     head: [
+            //         ['Name', 'Email', 'Country']
+            //     ],
+            //     body: [
+            //         ['David', 'david@example.com', 'Sweden'],
+            //         ['Castille', 'castille@example.com', 'Spain'],
+            //         // ...
+            //     ],
+            // })
+
+
+            var string = pdf.output("datauristring");
+            $("iframe").attr("src", string);
+        });
+    </script>
+</body>
+
+</html>
