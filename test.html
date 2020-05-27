@@ -13,18 +13,250 @@
 <body style="height: 100%;">
     <iframe frameborder="1" width="100%" height="100%"></iframe>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var pdf = new jsPDF("p", "mm", "a4");
 
-            // Test text
+            var total = 0;
+            var subTotal = 0;
+            var subTotal2 = 0;
+            var idArticle = 0;
+            const TVA = 7.7;
+            
+            /* main data */
+            var contentDataClient = [
+                [216157, 920030174, 'Etude MCE Avocats', 'Grand Chêne 1-3', 'case postale 6868', '1002 Lausanne']
+            ];
+
+            var contentDataFacture = [
+                [920030174, 'Migration messagerie locale vers Microsoft Office 365', '17.03.2020', '16.04.2020', 1, 65, 2, 28, 3, 65, 4, 16]
+            ];
+
+            //colonne 3: 1 = Logiciel / 2 = Service
+            var contentDataArticle = [
+                [1, 'Licence BitTitan MigrationWiz', 1, 20],
+                [2, 'Prémigration', 2, 150],
+                [3, 'Migration individuelle des emails', 2, 112.5],
+                [4, 'Postmigration', 2, 150]
+            ];
+
+            /* A FAIRE */
+            //Futur fonction pour calculer le sous total
+            function getSubTot(idArticle) {
+                var subTot = 0;
+                if(idArticle == 1){
+                    subTot = contentDataArticle[0][3] * contentDataFacture[0][5];
+                }
+                if(idArticle == 2){
+                    subTot = contentDataArticle[1][3] * contentDataFacture[0][7] + contentDataArticle[2][3] * contentDataFacture[0][9] + contentDataArticle[3][3] * contentDataFacture[0][11];
+                }
+
+                return subTot
+            };
+
+            /* A FAIRE */
+            //Futur fonction pour calculer le total
+            function getTot() {
+                var tot = 0;
+                tot = contentDataArticle[0][3] * contentDataFacture[0][5] + contentDataArticle[1][3] * contentDataFacture[0][7] + contentDataArticle[2][3] * contentDataFacture[0][9] + contentDataArticle[3][3] * contentDataFacture[0][11];
+
+                return tot
+            };
+
+            total = getTot();
+            subTotal = getSubTot(1);
+            subTotal2 = getSubTot(2);
+
+            //function generate main body
+            function getData() {
+
+                var body = []
+
+                body = [
+                    //Title: gray box
+                    [{
+                        content: 'Facture - ' + contentDataFacture[0][1],
+                        colSpan: 4,
+                        styles: {
+                            halign: 'center',
+                            fontStyle: 'bold'
+                        }
+                    }],
+
+                    //header: gray font
+                    ['Article', 'Prix unitaire', 'Quantité', 'Montant Total'],
+
+                    //header 1st content: soft gray box
+                    [{
+                        content: 'Logiciel',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'left',
+                            fontStyle: 'bold'
+                        }
+                    }],
+
+                    //1st content
+                    [contentDataArticle[0][1], contentDataArticle[0][3], contentDataFacture[0][5], contentDataArticle[0][3] * contentDataFacture[0][5]],
+                    [{
+                        content: 'Sous total',
+                        colSpan: 3,
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {   
+                        content: subTotal + ' CHF',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }],
+
+                    //header 2nd content: soft gray box
+                    [{
+                        content: 'Service',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'left',
+                            fontStyle: 'bold'
+                        }
+                    }],
+
+                    //2nd content
+                    [contentDataArticle[1][1], contentDataArticle[1][3], contentDataFacture[0][7], contentDataArticle[1][3] * contentDataFacture[0][7]],
+                    [contentDataArticle[2][1], contentDataArticle[2][3], contentDataFacture[0][9], contentDataArticle[2][3] * contentDataFacture[0][9]],
+                    [contentDataArticle[3][1], contentDataArticle[3][3], contentDataFacture[0][11], contentDataArticle[3][3] * contentDataFacture[0][11]],
+                    [{
+                        content: 'Sous total',
+                        colSpan: 3,
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {   
+                        content: subTotal2 + ' CHF',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }],
+
+                    //bottom info: soft gray box
+                    [{
+                        content: 'Facture ' + contentDataFacture[0][0] + ': ' + contentDataFacture[0][1],
+                        colSpan: 4,
+                        styles: {
+                            halign: 'left',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: '',
+                        colSpan: 4
+                    }],
+
+                    //total box
+                    [{
+                        content: 'SOUS-TOTAL',
+                        colSpan: 3,
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {   
+                        content: total + ' CHF',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        //add yellow box
+                        content: 'Tarif horaire hors TVA: 150.00 CHF',
+                        colSpan: 2,
+                        styles: {
+                            halign: 'left'
+                        }
+                    },
+                    {
+                        content: 'TVA ' + TVA + '%',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {
+                        content: ((total / 100) * TVA) + ' CHF',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: 'MONTANT TOTAL',
+                        colSpan: 3,
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {   
+                        content: (total + (total / 100) * TVA) + ' CHF',
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: '',
+                        colSpan: 4
+                    }],
+
+                    //info box
+                    [{
+                        content: 'Informations',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'center',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: 'Lorem ipsum',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'left',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: 'Lorem ipsum2',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'left'
+                        }
+                    }],
+                    [{
+                        content: 'Payable à 30 jours net',
+                        colSpan: 4,
+                        styles: {
+                            halign: 'right',
+                            fontStyle: 'bold'
+                        }
+                    }]
+                ]
+
+                return body
+            };
+
+            // Test text - logo?
             pdf.setFontSize(40);
             pdf.text(20, 20, "Hello world");
 
-            // test rectangle
-            // pdf.rect(50, 50, 20, 10);
-
-
-            // Addresse gauche
+            // Addresse client
             pdf.autoTable({
                 startY: 53,
                 tableWidth: 'wrap',
@@ -40,18 +272,20 @@
                 },
                 body: [
                     [{
-                        content: "Adresse du client",
+                        content: 'Adresse du client',
                         styles: {
                             fontStyle: 'bold'
                         }
                     }],
-                    ["Etude MCE Avocats"],
-                    ["Grand Chêne 1-3"],
-                    ["Case postal 6868"],
-                    ["1002 Lausanne"]
+                    [{ content: contentDataClient[0][2]}],
+                    [{ content: contentDataClient[0][3]}],
+                    [{ content: contentDataClient[0][4]}],
+                    [{ content: contentDataClient[0][5]}]
+
                 ]
             });
 
+            //info facture
             pdf.autoTable({
                 startY: 15,
                 tableWidth: 'wrap',
@@ -75,7 +309,7 @@
                         }
                     }],
                     [{
-                        content: '920030174',
+                        content: contentDataFacture[0][0],
                         colSpan: 2,
                         styles: {
                             fontStyle: 'bold',
@@ -86,7 +320,7 @@
                     [{
                         content: "Date d'émission:"
                     }, {
-                        content: '17.03.2020',
+                        content: contentDataFacture[0][2],
                         styles: {
                             fontStyle: 'bold',
                         }
@@ -97,7 +331,7 @@
                             halign: 'right',
                         }
                     }, {
-                        content: '16.04.2020',
+                        content: contentDataFacture[0][3],
                         styles: {
                             fontStyle: 'bold',
                         }
@@ -113,21 +347,47 @@
                 ]
             });
 
+            //numero client
+            pdf.autoTable({
+                startY: 70,
+                margin: {
+                    left: 130,
+                },
+                body: [
+                    ['Numéro de client', contentDataClient[0][0]]
+                ],
+
+                columnStyles: {
+                    0: {
+                        fontStyle: 'bold',
+                    },
+                    1: {
+                        halign: 'right',
+                    },
+                },
+            });
+
+            //tableau principal
+            pdf.autoTable({
+                startY: 90,
+                margin: {
+                    left: 22,
+                },
+                body: getData(),
+                columnStyles: {
+                    1: {
+                        halign: 'right',
+                    },
+                    2: {
+                        halign: 'center',
+                    },
+                    3: {
+                        halign: 'right',
+                    }
+                }
+            });
+
             pdf.addPage();
-
-            // test table
-            // pdf.autoTable({
-            //     startY: 30,
-            //     head: [
-            //         ['Name', 'Email', 'Country']
-            //     ],
-            //     body: [
-            //         ['David', 'david@example.com', 'Sweden'],
-            //         ['Castille', 'castille@example.com', 'Spain'],
-            //         // ...
-            //     ],
-            // })
-
 
             var string = pdf.output("datauristring");
             $("iframe").attr("src", string);

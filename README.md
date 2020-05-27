@@ -1,7 +1,6 @@
 jspdf-cinfo
 
 
-
 # Exemples
 https://simonbengtsson.github.io/jsPDF-AutoTable/#
 ## Code
