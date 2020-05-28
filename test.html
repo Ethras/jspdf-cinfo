@@ -286,14 +286,18 @@
                     content: 'MONTANT TOTAL',
                     styles: {
                         halign: 'left',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        //soft gray box
+                        fillColor: [220, 220, 220]
                     }
                 },
                 {
                     content: ((totalData.total + (totalData.total / 100) * TVA)).toFixed(2) + ' CHF',
                     styles: {
                         halign: 'right',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        //soft gray box
+                        fillColor: [220, 220, 220]
                     }
                 }]);
                 body.push([{
@@ -484,6 +488,144 @@
             });
 
             pdf.addPage();
+
+            /* PAGE 2 */
+             // Test text - logo?
+             pdf.setFontSize(40);
+            pdf.text(20, 20, "Hello world");
+
+            //info facture
+            pdf.autoTable({
+                startY: 15,
+                theme: 'plain',
+                tableWidth: 'wrap',
+                margin: {
+                    left: 155,
+                },
+                styles: {
+                    font: 'roboto',
+                    cellPadding: 0.5,
+                    halign: 'right',
+                },
+                body: [
+                    [{
+                        content: "N° de facture",
+                        colSpan: 2,
+                        styles: {
+                            textColor: '#999999',
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: bill.id,
+                        colSpan: 2,
+                        styles: {
+                            fontStyle: 'bold',
+                            textColor: '#1750a0'
+                        }
+                    }],
+                    [{
+                        content: "Date d'émission:"
+                    }, {
+                        content: bill.dateStart,
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "Échéance:"
+                    }, {
+                        content: bill.dateEnd,
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "CHE-631.761 TVA",
+                        colSpan: 2
+                    }]
+                ]
+            });
+
+            // Addresse client
+            pdf.autoTable({
+                startY: 53,
+                theme: 'plain',
+                tableWidth: 'wrap',
+                margin: {
+                    left: 22
+                },
+                styles: {
+                    font: 'roboto',
+                    cellPadding: 0.5,
+                },
+                body: [
+                    [{
+                        content: 'Adresse du client',
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{ content: bill.client.name }],
+                    [{ content: bill.client.street }],
+                    [{ content: bill.client.postal }],
+                    [{ content: bill.client.city }]
+
+                ]
+            });
+
+            //numero client
+            pdf.autoTable({
+                startY: 70,
+                theme: 'plain',
+                margin: {
+                    left: 130,
+                },
+
+                styles: {
+                    font: 'roboto',
+                    textColor: '#999999',
+                    //yellow box
+                    fillColor: [255, 255, 224]
+                },
+                columnStyles: {
+                    0: {
+                        fontStyle: 'bold',
+                    },
+                    1: {
+                        halign: 'right',
+                    },
+                },
+                body: [
+                    ['Numéro de client', bill.client.id]
+                ]
+            });
+
+            pdf.autoTable({
+                startY: 90,
+                margin: {
+                    left: 22,
+                },
+                theme: 'plain',
+                styles: {
+                    font: 'roboto',
+                },
+                columnStyles: {
+                    2: {
+                        halign: 'right',
+                        cellWidth: 'wrap'
+                    },
+                    3: {
+                        halign: 'center',
+                        cellWidth: 'wrap'
+                    },
+                    4: {
+                        halign: 'right',
+                        cellWidth: 'wrap'
+                    }
+                },
+                body: getBody()
+            });
 
             var string = pdf.output("datauristring");
             $("iframe").attr("src", string);
