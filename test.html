@@ -8,6 +8,10 @@
     <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="roboto-normal.js"></script>
+    <script type="text/javascript" src="roboto-italic.js"></script>
+    <script type="text/javascript" src="roboto-bold.js"></script>
+    <script type="text/javascript" src="roboto-bolditalic.js"></script>
 </head>
 
 <body style="height: 100%;">
@@ -30,7 +34,7 @@
                 title: 'Migration messagerie locale vers Microsoft Office 365',
                 dateStart: '17.03.2020',
                 dateEnd: '16.04.2020',
-                hourlyRate: 150.0,
+                hourlyRate: 150,
                 client: {
                     id: 216157,
                     name: 'Etude MCE Avocats',
@@ -72,21 +76,22 @@
                         data.push([
                             {
                                 content: i.description,
+                                colSpan: 2,
                                 styles: {
                                 }
                             },
                             {
-                                content: i.price,
+                                content: i.price.toFixed(2) + ' CHF',
                                 styles: {
                                 }
                             },
                             {
-                                content: i.quantity,
+                                content: i.quantity.toFixed(2),
                                 styles: {
                                 }
                             },
                             {
-                                content: i.total,
+                                content: i.total.toFixed(2) + ' CHF',
                                 styles: {
                                 }
                             }
@@ -95,31 +100,36 @@
                 })
             };
 
+            //main body data
             function getBody() {
                 let body = [];
 
                 //header
                 body = [
-                    //Title: gray box
+                    //Title
                     [{
                         content: 'Facture - ' + bill.title,
-                        colSpan: 4,
+                        colSpan: 5,
                         styles: {
                             halign: 'center',
-                            fontStyle: 'bold'
+                            fontStyle: 'bold',
+                            //gray box
+                            fillColor: [192, 192, 192]
                         }
                     }],
                     //header: gray font
-                    ['Article', 'Prix unitaire', 'Quantité', 'Montant Total'],
+                    ['Article', '', 'Prix unitaire', 'Quantité', 'Montant Total'],
                 ]
 
-                //header 1st content: soft gray box
+                //header 1st content
                 body.push([{
                     content: 'Logiciel',
-                    colSpan: 4,
+                    colSpan: 5,
                     styles: {
                         halign: 'left',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        //soft gray box
+                        fillColor: [220, 220, 220]
                     }
                 }]);
                 //1st content
@@ -127,27 +137,29 @@
                 //1st subtotal
                 body.push([{
                     content: 'Sous total',
-                    colSpan: 3,
+                    colSpan: 4,
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold'
                     }
                 },
                 {
-                    content: totalData.subTotalSoftware + ' CHF',
+                    content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold'
                     }
                 }]);
 
-                //header 2nd content: soft gray box
+                //header 2nd content
                 body.push([{
                     content: 'Service',
-                    colSpan: 4,
+                    colSpan: 5,
                     styles: {
                         halign: 'left',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        //soft gray box
+                        fillColor: [220, 220, 220]
                     }
                 }]);
                 //2nd content
@@ -155,14 +167,14 @@
                 //2nd subtotal
                 body.push([{
                     content: 'Sous total',
-                    colSpan: 3,
+                    colSpan: 4,
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold'
                     }
                 },
                 {
-                    content: totalData.subTotalService + ' CHF',
+                    content: totalData.subTotalService.toFixed(2) + ' CHF',
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold'
@@ -170,107 +182,128 @@
                 }]);
                 body.push([{
                     content: 'Facture ' + bill.id + ': ' + bill.title,
-                    colSpan: 4,
+                    colSpan: 5,
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold',
+                        //soft gray box
+                        fillColor: [220, 220, 220]
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 5
+                }]);
+
+                //total box
+                body.push([{
+                    content: '',
+                    colSpan: 3
+                },
+                {
+                    content: 'SOUS-TOTAL',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: totalData.total.toFixed(2) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    //yellow box
+                    content: 'Tarif horaire hors TVA: ',
+                    styles: {
+                        halign: 'left',
+                        fillColor: [255, 255, 224]
+                    }
+                },
+                {
+                    //yellow box
+                    content: bill.hourlyRate.toFixed(2) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fillColor: [255, 255, 224]
+                    }
+                },
+                {
+                    content: ''
+                },
+                {
+                    content: 'TVA ' + TVA + '%',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: ((totalData.total / 100) * TVA).toFixed(2) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 3
+                },
+                {
+                    content: 'MONTANT TOTAL',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: ((totalData.total + (totalData.total / 100) * TVA)).toFixed(2) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 5
+                }]);
+
+                //info box
+                body.push([{
+                    content: 'Informations',
+                    colSpan: 5,
+                    styles: {
+                        halign: 'center',
+                        fontStyle: 'bold',
+                        //gray box
+                        fillColor: [192, 192, 192]
+                    }
+                }]);
+                body.push([{
+                    content: 'Lorem ipsum',
+                    colSpan: 5,
                     styles: {
                         halign: 'left',
                         fontStyle: 'bold'
                     }
                 }]);
                 body.push([{
-                    content: '',
-                    colSpan: 4
-                }]);
-
-                //total box
-                body.push([{
-                    content: 'SOUS-TOTAL',
-                    colSpan: 3,
-                    styles: {
-                        halign: 'right',
-                        fontStyle: 'bold'
-                    }
-                },
-                {
-                    content: totalData.total + ' CHF',
-                    styles: {
-                        halign: 'right',
-                        fontStyle: 'bold'
-                    }
-                }]);
-                body.push([{
-                    //add yellow box
-                    content: 'Tarif horaire hors TVA: ' + bill.hourlyRate + ' CHF',
-                    colSpan: 2,
+                    content: 'Lorem ipsum2',
+                    colSpan: 5,
                     styles: {
                         halign: 'left'
                     }
-                },
-                {
-                    content: 'TVA ' + TVA + '%',
-                    styles: {
-                        halign: 'right',
-                        fontStyle: 'bold'
-                    }
-                },
-                {
-                    content: ((totalData.total / 100) * TVA) + ' CHF',
+                }]);
+                body.push([{
+                    content: 'Payable à 30 jours net',
+                    colSpan: 5,
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold'
                     }
                 }]);
-                body.push([{
-                    content: 'MONTANT TOTAL',
-                    colSpan: 3,
-                    styles: {
-                        halign: 'right',
-                        fontStyle: 'bold'
-                    }
-                },
-                {
-                    content: (totalData.total + (totalData.total / 100) * TVA) + ' CHF',
-                    styles: {
-                        halign: 'right',
-                        fontStyle: 'bold'
-                    }
-                }]);
-                body.push([{
-                    content: '',
-                    colSpan: 4
-                }]);
-                
-                //info box
-                body.push([{
-                        content: 'Informations',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'center',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                body.push([{
-                        content: 'Lorem ipsum',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                body.push([{
-                        content: 'Lorem ipsum2',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'left'
-                        }
-                    }]);
-                body.push([{
-                        content: 'Payable à 30 jours net',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
 
                 return body
             };
@@ -283,19 +316,75 @@
             pdf.setFontSize(40);
             pdf.text(20, 20, "Hello world");
 
+            //info facture
+            pdf.autoTable({
+                startY: 15,
+                theme: 'plain',
+                tableWidth: 'wrap',
+                margin: {
+                    left: 155,
+                },
+                styles: {
+                    font: 'roboto',
+                    cellPadding: 0.5,
+                    halign: 'right',
+                    /* A supprimer */
+                    lineColor: [44, 62, 80],
+                    lineWidth: 0.5,
+                },
+                body: [
+                    [{
+                        content: "N° de facture",
+                        colSpan: 2,
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: bill.id,
+                        colSpan: 2,
+                        styles: {
+                            fontStyle: 'bold',
+                            textColor: '#1750a0'
+                        }
+                    }],
+                    [{
+                        content: "Date d'émission:"
+                    }, {
+                        content: bill.dateStart,
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "Échéance:"
+                    }, {
+                        content: bill.dateEnd,
+                        styles: {
+                            fontStyle: 'bold',
+                        }
+                    }],
+                    [{
+                        content: "CHE-631.761 TVA",
+                        colSpan: 2
+                    }]
+                ]
+            });
+
             // Addresse client
             pdf.autoTable({
                 startY: 53,
+                theme: 'plain',
                 tableWidth: 'wrap',
                 margin: {
                     left: 22
                 },
                 styles: {
-                    fillColor: [255, 255, 255],
+                    font: 'roboto',
                     cellPadding: 0.5,
-                },
-                alternateRowStyles: {
-                    fillColor: [255, 255, 255],
+                    /* a supprimer */
+                    lineColor: [44, 62, 80],
+                    lineWidth: 0.5,
                 },
                 body: [
                     [{
@@ -312,78 +401,23 @@
                 ]
             });
 
-            //info facture
-            pdf.autoTable({
-                startY: 15,
-                tableWidth: 'wrap',
-                margin: {
-                    left: 155,
-                },
-                styles: {
-                    fillColor: [255, 255, 255],
-                    cellPadding: 0.5,
-                },
-                alternateRowStyles: {
-                    fillColor: [255, 255, 255],
-                },
-                body: [
-                    [{
-                        content: "N° de facture",
-                        colSpan: 2,
-                        styles: {
-                            fontStyle: 'bold',
-                            halign: 'right'
-                        }
-                    }],
-                    [{
-                        content: bill.id,
-                        colSpan: 2,
-                        styles: {
-                            fontStyle: 'bold',
-                            halign: 'right',
-                            textColor: '#1750a0'
-                        }
-                    }],
-                    [{
-                        content: "Date d'émission:"
-                    }, {
-                        content: bill.dateStart,
-                        styles: {
-                            fontStyle: 'bold',
-                        }
-                    }],
-                    [{
-                        content: "Échéance:",
-                        styles: {
-                            halign: 'right',
-                        }
-                    }, {
-                        content: bill.dateEnd,
-                        styles: {
-                            fontStyle: 'bold',
-                        }
-                    }],
-                    [{
-                        content: "CHE-631.761 TVA",
-                        colSpan: 2,
-                        styles: {
-                            halign: 'right',
-                        }
-
-                    }]
-                ]
-            });
 
             //numero client
             pdf.autoTable({
                 startY: 70,
+                theme: 'plain',
                 margin: {
                     left: 130,
                 },
-                body: [
-                    ['Numéro de client', bill.client.id]
-                ],
 
+                styles: {
+                    font: 'roboto',
+                    /* a supprimer */
+                    lineColor: [44, 62, 80],
+                    lineWidth: 0.5,
+                    //yellow box
+                    fillColor: [255, 255, 224]
+                },
                 columnStyles: {
                     0: {
                         fontStyle: 'bold',
@@ -392,6 +426,9 @@
                         halign: 'right',
                     },
                 },
+                body: [
+                    ['Numéro de client', bill.client.id]
+                ]
             });
 
             //tableau principal
@@ -400,18 +437,28 @@
                 margin: {
                     left: 22,
                 },
-                body: getBody(),
+                theme: 'plain',
+                styles: {
+                    font: 'roboto',
+                    /* a supprimer */
+                    lineColor: [44, 62, 80],
+                    lineWidth: 0.5
+                },
                 columnStyles: {
-                    1: {
-                        halign: 'right',
-                    },
                     2: {
-                        halign: 'center',
+                        halign: 'right',
+                        cellWidth: 'wrap',
                     },
                     3: {
+                        halign: 'center',
+                        cellWidth: 'wrap'
+                    },
+                    4: {
                         halign: 'right',
+                        cellWidth: 'wrap'
                     }
-                }
+                },
+                body: getBody()
             });
 
             pdf.addPage();
