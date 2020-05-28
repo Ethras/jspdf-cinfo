@@ -104,7 +104,7 @@
             function getBody() {
                 let body = [];
 
-                //header
+                //title+header
                 body = [
                     //Title
                     [{
@@ -117,8 +117,37 @@
                             fillColor: [192, 192, 192]
                         }
                     }],
-                    //header: gray font
-                    ['Article', '', 'Prix unitaire', 'Quantité', 'Montant Total'],
+                    //header
+                    [{
+                        content: 'Article',
+                        styles: {
+                            textColor: '#999999',
+                            fontStyle: 'bold'
+                        }
+                    },{
+                        content: '',
+                    },
+                    {
+                        content: 'Prix unitaire',
+                        styles: {
+                            textColor: '#999999',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {
+                        content: 'Quantité',
+                        styles: {
+                            textColor: '#999999',
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {
+                        content: 'Montant Totale',
+                        styles: {
+                            textColor: '#999999',
+                            fontStyle: 'bold'
+                        }
+                    }]
                 ]
 
                 //header 1st content
@@ -219,7 +248,8 @@
                     content: 'Tarif horaire hors TVA: ',
                     styles: {
                         halign: 'left',
-                        fillColor: [255, 255, 224]
+                        fillColor: [255, 255, 224],
+                        textColor: '#999999'
                     }
                 },
                 {
@@ -227,7 +257,8 @@
                     content: bill.hourlyRate.toFixed(2) + ' CHF',
                     styles: {
                         halign: 'right',
-                        fillColor: [255, 255, 224]
+                        fillColor: [255, 255, 224],
+                        textColor: '#999999'
                     }
                 },
                 {
@@ -282,15 +313,16 @@
                     }
                 }]);
                 body.push([{
-                    content: 'Lorem ipsum',
+                    content: 'IMPORTANT: Effectuez si possible le paiement au moyen du bulletin de versement annexé.',
                     colSpan: 5,
                     styles: {
                         halign: 'left',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        textColor: '#cc0000'
                     }
                 }]);
                 body.push([{
-                    content: 'Lorem ipsum2',
+                    content: 'Paiement par télébanque: Veuillez indiquer le n° de facture. Merci',
                     colSpan: 5,
                     styles: {
                         halign: 'left'
@@ -301,7 +333,8 @@
                     colSpan: 5,
                     styles: {
                         halign: 'right',
-                        fontStyle: 'bold'
+                        fontStyle: 'bold',
+                        textColor: '#cc0000'
                     }
                 }]);
 
@@ -328,15 +361,13 @@
                     font: 'roboto',
                     cellPadding: 0.5,
                     halign: 'right',
-                    /* A supprimer */
-                    lineColor: [44, 62, 80],
-                    lineWidth: 0.5,
                 },
                 body: [
                     [{
                         content: "N° de facture",
                         colSpan: 2,
                         styles: {
+                            textColor: '#999999',
                             fontStyle: 'bold'
                         }
                     }],
@@ -382,9 +413,6 @@
                 styles: {
                     font: 'roboto',
                     cellPadding: 0.5,
-                    /* a supprimer */
-                    lineColor: [44, 62, 80],
-                    lineWidth: 0.5,
                 },
                 body: [
                     [{
@@ -401,7 +429,6 @@
                 ]
             });
 
-
             //numero client
             pdf.autoTable({
                 startY: 70,
@@ -412,9 +439,7 @@
 
                 styles: {
                     font: 'roboto',
-                    /* a supprimer */
-                    lineColor: [44, 62, 80],
-                    lineWidth: 0.5,
+                    textColor: '#999999',
                     //yellow box
                     fillColor: [255, 255, 224]
                 },
@@ -440,14 +465,11 @@
                 theme: 'plain',
                 styles: {
                     font: 'roboto',
-                    /* a supprimer */
-                    lineColor: [44, 62, 80],
-                    lineWidth: 0.5
                 },
                 columnStyles: {
                     2: {
                         halign: 'right',
-                        cellWidth: 'wrap',
+                        cellWidth: 'wrap'
                     },
                     3: {
                         halign: 'center',
