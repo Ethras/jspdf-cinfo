@@ -26,42 +26,26 @@
 
             /* bill data */
             let bill = {
-                client: {
-                    clientNo: 216157,
-                    clientName: 'Etude MCE Avocats',
-                    clientStreet: 'Grand Chêne 1-3',
-                    clientPostal: 'case postale 6868',
-                    clientCity: '1002 Lausanne'
-                },
-                billNo: 920030174,
-                billTitle: 'Migration messagerie locale vers Microsoft Office 365',
+                id: 920030174,
+                title: 'Migration messagerie locale vers Microsoft Office 365',
+                dateStart: '17.03.2020',
+                dateEnd: '16.04.2020',
                 hourlyRate: 150.0,
+                client: {
+                    id: 216157,
+                    name: 'Etude MCE Avocats',
+                    street: 'Grand Chêne 1-3',
+                    postal: 'case postale 6868',
+                    city: '1002 Lausanne'
+                },
                 lines: [
                     { description: 'Licence BitTitan MigrationWiz', type: 1, price: 20, quantity: 65, total: 1300 },
                     { description: 'Prémigration', type: 2, price: 150, quantity: 28, total: 4200 },
                     { description: 'Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: 'Postmigration', type: 2, price: 150, quantity: 16, total: 2400 }
-                ]
+                ],
+                total: 432432
             };
-
-            /* a supprimer */
-            var contentDataClient = [
-                [216157, 920030174, 'Etude MCE Avocats', 'Grand Chêne 1-3', 'case postale 6868', '1002 Lausanne']
-            ];
-
-            /* a supprimer */
-            var contentDataFacture = [
-                [920030174, 'Migration messagerie locale vers Microsoft Office 365', '17.03.2020', '16.04.2020', 1, 65, 2, 28, 3, 65, 4, 16]
-            ];
-
-            /* a supprimer */
-            //colonne 3: 1 = Logiciel / 2 = Service
-            var contentDataArticle = [
-                [1, 'Licence BitTitan MigrationWiz', 1, 20],
-                [2, 'Prémigration', 2, 150],
-                [3, 'Migration individuelle des emails', 2, 112.5],
-                [4, 'Postmigration', 2, 150]
-            ];
 
             /* FUNCTIONS */
             //calculate total and subTotal
@@ -81,197 +65,215 @@
                 }
             };
 
-            //generate main body
-            function getData() {
+            //generate main data for body
+            function generateData(billLineType, data) {
+                bill.lines.forEach(i => {
+                    if (i.type == billLineType) {
+                        data.push([
+                            {
+                                content: i.description,
+                                styles: {
+                                }
+                            },
+                            {
+                                content: i.price,
+                                styles: {
+                                }
+                            },
+                            {
+                                content: i.quantity,
+                                styles: {
+                                }
+                            },
+                            {
+                                content: i.total,
+                                styles: {
+                                }
+                            }
+                        ]);
+                    }
+                })
+            };
 
-                var body = [];
+            function getBody() {
+                let body = [];
 
+                //header
                 body = [
                     //Title: gray box
                     [{
-                        content: 'Facture - ' + contentDataFacture[0][1],
+                        content: 'Facture - ' + bill.title,
                         colSpan: 4,
                         styles: {
                             halign: 'center',
                             fontStyle: 'bold'
                         }
                     }],
-
                     //header: gray font
                     ['Article', 'Prix unitaire', 'Quantité', 'Montant Total'],
+                ]
 
-                    //header 1st content: soft gray box
-                    [{
-                        content: 'Logiciel',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    }],
-                    // [1,2,3,4, ...[5,6,7]] = [1,2,3,4,5,6,7]
-                    //1st content
-                    [contentDataArticle[0][1], contentDataArticle[0][3], contentDataFacture[0][5], contentDataArticle[0][3] * contentDataFacture[0][5]],
-                    [{
-                        content: 'Sous total',
-                        colSpan: 3,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalSoftware + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }],
-
-                    //header 2nd content: soft gray box
-                    [{
-                        content: 'Service',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    }],
-
-                    //2nd content
-                    /*for (let index = 0; index < array.length; index++) {
-                        const element = array[index];
-                        
+                //header 1st content: soft gray box
+                body.push([{
+                    content: 'Logiciel',
+                    colSpan: 4,
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
                     }
-                    ...bill.lines.filter(l => l.type == 2),*/
-                    [contentDataArticle[1][1], contentDataArticle[1][3], contentDataFacture[0][7], contentDataArticle[1][3] * contentDataFacture[0][7]],
-                    [contentDataArticle[2][1], contentDataArticle[2][3], contentDataFacture[0][9], contentDataArticle[2][3] * contentDataFacture[0][9]],
-                    [contentDataArticle[3][1], contentDataArticle[3][3], contentDataFacture[0][11], contentDataArticle[3][3] * contentDataFacture[0][11]],
-                    [{
-                        content: 'Sous total',
-                        colSpan: 3,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalService + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }],
+                }]);
+                //1st content
+                generateData(1, body);
+                //1st subtotal
+                body.push([{
+                    content: 'Sous total',
+                    colSpan: 3,
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: totalData.subTotalSoftware + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
 
-                    //bottom info: soft gray box
-                    [{
-                        content: 'Facture ' + contentDataFacture[0][0] + ': ' + contentDataFacture[0][1],
-                        colSpan: 4,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    }],
-                    [{
-                        content: '',
-                        colSpan: 4
-                    }],
+                //header 2nd content: soft gray box
+                body.push([{
+                    content: 'Service',
+                    colSpan: 4,
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                //2nd content
+                generateData(2, body);
+                //2nd subtotal
+                body.push([{
+                    content: 'Sous total',
+                    colSpan: 3,
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: totalData.subTotalService + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: 'Facture ' + bill.id + ': ' + bill.title,
+                    colSpan: 4,
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 4
+                }]);
 
-                    //total box
-                    [{
-                        content: 'SOUS-TOTAL',
-                        colSpan: 3,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.total + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }],
-                    [{
-                        //add yellow box
-                        content: 'Tarif horaire hors TVA: 150.00 CHF',
-                        colSpan: 2,
-                        styles: {
-                            halign: 'left'
-                        }
-                    },
-                    {
-                        content: 'TVA ' + TVA + '%',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: ((totalData.total / 100) * TVA) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }],
-                    [{
-                        content: 'MONTANT TOTAL',
-                        colSpan: 3,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: (totalData.total + (totalData.total / 100) * TVA) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }],
-                    [{
-                        content: '',
-                        colSpan: 4
-                    }],
-
-                    //info box
-                    [{
+                //total box
+                body.push([{
+                    content: 'SOUS-TOTAL',
+                    colSpan: 3,
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: totalData.total + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    //add yellow box
+                    content: 'Tarif horaire hors TVA: ' + bill.hourlyRate + ' CHF',
+                    colSpan: 2,
+                    styles: {
+                        halign: 'left'
+                    }
+                },
+                {
+                    content: 'TVA ' + TVA + '%',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: ((totalData.total / 100) * TVA) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: 'MONTANT TOTAL',
+                    colSpan: 3,
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: (totalData.total + (totalData.total / 100) * TVA) + ' CHF',
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 4
+                }]);
+                
+                //info box
+                body.push([{
                         content: 'Informations',
                         colSpan: 4,
                         styles: {
                             halign: 'center',
                             fontStyle: 'bold'
                         }
-                    }],
-                    [{
+                    }]);
+                body.push([{
                         content: 'Lorem ipsum',
                         colSpan: 4,
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold'
                         }
-                    }],
-                    [{
+                    }]);
+                body.push([{
                         content: 'Lorem ipsum2',
                         colSpan: 4,
                         styles: {
                             halign: 'left'
                         }
-                    }],
-                    [{
+                    }]);
+                body.push([{
                         content: 'Payable à 30 jours net',
                         colSpan: 4,
                         styles: {
                             halign: 'right',
                             fontStyle: 'bold'
                         }
-                    }]
-                ]
+                    }]);
 
                 return body
             };
-
 
             /* PAGE */
             //set total and subTotal
@@ -302,10 +304,10 @@
                             fontStyle: 'bold'
                         }
                     }],
-                    [{ content: bill.client.clientName }],
-                    [{ content: contentDataClient[0][3] }],
-                    [{ content: contentDataClient[0][4] }],
-                    [{ content: contentDataClient[0][5] }]
+                    [{ content: bill.client.name }],
+                    [{ content: bill.client.street }],
+                    [{ content: bill.client.postal }],
+                    [{ content: bill.client.city }]
 
                 ]
             });
@@ -334,7 +336,7 @@
                         }
                     }],
                     [{
-                        content: contentDataFacture[0][0],
+                        content: bill.id,
                         colSpan: 2,
                         styles: {
                             fontStyle: 'bold',
@@ -345,7 +347,7 @@
                     [{
                         content: "Date d'émission:"
                     }, {
-                        content: contentDataFacture[0][2],
+                        content: bill.dateStart,
                         styles: {
                             fontStyle: 'bold',
                         }
@@ -356,7 +358,7 @@
                             halign: 'right',
                         }
                     }, {
-                        content: contentDataFacture[0][3],
+                        content: bill.dateEnd,
                         styles: {
                             fontStyle: 'bold',
                         }
@@ -379,7 +381,7 @@
                     left: 130,
                 },
                 body: [
-                    ['Numéro de client', contentDataClient[0][0]]
+                    ['Numéro de client', bill.client.id]
                 ],
 
                 columnStyles: {
@@ -398,7 +400,7 @@
                 margin: {
                     left: 22,
                 },
-                body: getData(),
+                body: getBody(),
                 columnStyles: {
                     1: {
                         halign: 'right',
