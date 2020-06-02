@@ -32,6 +32,12 @@
                 subTotalService: 0
             };
 
+            let booleanType = {
+                software: false,
+                service: false,
+                unknown: false
+            }
+
             /* bill data */
             let bill = {
                 id: 920030174,
@@ -53,8 +59,9 @@
                     account: '01-1502-9',
                     ref: '10 21390 00002 16157 92003 01740'
                 },
+                type: ['Article', 'Service', '3 ème'],
                 lines: [
-                    { description: 'Licence BitTitan MigrationWiz', type: 1, price: 20, quantity: 65, total: 1300 },
+                    { description: 'Licence BitTitan MigrationWiz', type: 2, price: 20, quantity: 65, total: 1300 },
                     { description: 'Prémigration', type: 2, price: 150, quantity: 28, total: 4200 },
                     { description: '1Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: '2Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
@@ -148,7 +155,7 @@
 
             //currency format
             function formatCurrency(currency) {
-                currency = new Intl.NumberFormat("de-CH", {style: 'currency', currency: 'CHF'}).format(currency);
+                currency = new Intl.NumberFormat("de-CH", { style: 'currency', currency: 'CHF' }).format(currency);
 
                 return currency
             };
@@ -174,10 +181,10 @@
                     },
                     columnStyles: {
                         0: {
-                            cellWidth:'auto',
+                            cellWidth: 'auto',
                         },
                         1: {
-                            cellWidth:'wrap',
+                            cellWidth: 'wrap',
                         }
                     },
                     body: [
@@ -201,13 +208,13 @@
                             content: "Date d'émission:",
                             styles: {
                                 halign: 'right',
-                                cellWidth:'auto',
+                                cellWidth: 'auto',
                             }
                         }, {
                             content: bill.dateStart,
                             styles: {
                                 fontStyle: 'bold',
-                                cellWidth:'wrap',
+                                cellWidth: 'wrap',
                             }
                         }],
                         [{
@@ -264,7 +271,6 @@
                     margin: {
                         left: 130,
                     },
-
                     styles: {
                         font: env.font,
                         textColor: env.grayText,
@@ -315,7 +321,19 @@
                         ]);
                     }
                 })
-            }
+            };
+
+            function checkType() {
+                bill.lines.forEach(i => {
+                    if (i.type == 1) {
+                        booleanType.software = true;
+                    } if (i.type == 2) {
+                        booleanType.service = true;
+                    } if (i.type == 3) {
+                        booleanType.unknown = true;
+                    }
+                })
+            };
 
             //generate body
             function getBody(idTable) {
@@ -367,78 +385,80 @@
                         }]
                     ];
 
-                    //header 1st content
-                    body.push([{
-                        content: 'Logiciel',
-                        colSpan: 5,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    }]);
-                    //1st content
-                    generateData(1, body);
-                    //1st subtotal
-                    body.push([{
-                        content: 'Sous total',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
+                    if (booleanType.software == true) {
+                        //header 1st content
+                        body.push([{
+                            content: 'Logiciel',
+                            colSpan: 5,
+                            styles: {
+                                halign: 'left',
+                                fontStyle: 'bold',
+                                fillColor: env.softGrayBox
+                            }
+                        }]);
+                        //1st content
+                        generateData(1, body);
+                        //1st subtotal
+                        body.push([{
+                            content: 'Sous total',
+                            colSpan: 4,
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        },
+                        {
+                            content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        }]);
+                    } if (booleanType.service == true) {
+                        //header 2nd content
+                        body.push([{
+                            content: 'Service',
+                            colSpan: 5,
+                            styles: {
+                                halign: 'left',
+                                fontStyle: 'bold',
+                                fillColor: env.softGrayBox
+                            }
+                        }]);
+                        //2nd content
+                        generateData(2, body);
+                        //2nd subtotal
+                        body.push([{
+                            content: 'Sous total',
+                            colSpan: 4,
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        },
+                        {
+                            content: totalData.subTotalService.toFixed(2) + ' CHF',
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        }]);
+                        body.push([{
+                            content: 'Facture ' + bill.id + ': ' + bill.title,
+                            colSpan: 5,
+                            styles: {
+                                halign: 'left',
+                                fontStyle: 'bold',
+                                fillColor: env.softGrayBox
+                            }
+                        }]);
+                    }
 
-                    //header 2nd content
-                    body.push([{
-                        content: 'Service',
-                        colSpan: 5,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    }]);
-                    //2nd content
-                    generateData(2, body);
-                    //2nd subtotal
-                    body.push([{
-                        content: 'Sous total',
-                        colSpan: 4,
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalService.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        content: 'Facture ' + bill.id + ': ' + bill.title,
-                        colSpan: 5,
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    }]);
+                    //total box
                     body.push([{
                         content: '',
                         colSpan: 5
                     }]);
-
-                    //total box
                     body.push([{
                         content: '',
                         colSpan: 3
@@ -543,36 +563,38 @@
                             }
                         }]
                     ];
-
+                    if (booleanType.software == true) {
+                        body.push([{
+                            content: 'Logiciel',
+                            colSpan: 4,
+                            styles: {
+                                fontStyle: 'bold'
+                            }
+                        },
+                        {
+                            content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        }]);
+                    } if (booleanType.service == true) {
+                        body.push([{
+                            content: 'Service',
+                            colSpan: 4,
+                            styles: {
+                                fontStyle: 'bold'
+                            }
+                        },
+                        {
+                            content: totalData.subTotalService.toFixed(2) + ' CHF',
+                            styles: {
+                                halign: 'right',
+                                fontStyle: 'bold'
+                            }
+                        }]);
+                    }
                     //content
-                    body.push([{
-                        content: 'Logiciel',
-                        colSpan: 4,
-                        styles: {
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        content: 'Service',
-                        colSpan: 4,
-                        styles: {
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.subTotalService.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
                     body.push([{
                         content: '',
                         colSpan: 5,
@@ -750,7 +772,7 @@
 
             //set total and subTotal
             calculateTot();
-
+            checkType();
             /*************
             * First Page *
             **************/
@@ -784,7 +806,7 @@
                 didDrawPage: function (data) {
                     // jsPDF 1.4+ uses getWidth, <1.4 uses .width
                     pdf.autoTable({
-                        startY: pdf.internal.pageSize.height - env.marginBottom+10,
+                        startY: pdf.internal.pageSize.height - env.marginBottom + 10,
                         margin: data.settings.margin.left,
                         theme: env.theme,
                         styles: {
@@ -850,7 +872,7 @@
                     [{
                         content: bill.bank.name,
                         styles: {
-                            
+
                         }
                     }],
                     [{
@@ -876,7 +898,7 @@
                     [{
                         content: bill.bank.name,
                         styles: {
-                            
+
                         }
                     }],
                     [{
@@ -903,7 +925,7 @@
                     [{
                         content: cinfo.name,
                         styles: {
-                            
+
                         }
                     }],
                     [{
@@ -934,7 +956,7 @@
                     [{
                         content: cinfo.name,
                         styles: {
-                            
+
                         }
                     }],
                     [{
@@ -974,7 +996,7 @@
                     [{
                         content: bill.bank.ref,
                         styles: {
-                            
+
                         }
                     }],
                     [{
@@ -1043,7 +1065,7 @@
 
             //BVR Serial
             pdf.text(env.marginSerial, env.startBVR_Serial, '' + bill.serial);
-            
+
             var string = pdf.output("datauristring");
             $("iframe").attr("src", string);
         });
