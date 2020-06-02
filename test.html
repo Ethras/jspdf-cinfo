@@ -95,27 +95,29 @@
                 fontSize: 8,
                 theme: 'plain',
                 tableWidth: 'wrap',
+                widthRightElements: 70,
                 cellPadding: 0.5,
                 footerPadding: 0.1,
                 footerFontSize: 6,
                 marginLeft: 15,
                 marginBottom: 40,
+                marginFloatRight: 125,
                 marginBVR: 5,
                 marginBVR2: 65,
-                marginBVR3: 130,
+                marginBVR3: 125,
                 marginSerial: 90,
                 startHeader: 15,
                 startAdress: 50,
-                startMainTable: 90,
-                startNoClient: 70,
+                startMainTable: 85,
+                startNoClient: 75,
                 startBVR_Bank: 200,
-                startBVR_CInfo: 215,
-                startBVR_Acc: 240,
-                startBVR_Tot: 245,
+                startBVR_CInfo: 214,
+                startBVR_Acc: 235,
+                startBVR_Tot: 240,
                 startBVR_Cli: 255,
-                startBVR_Ref: 230,
-                startBVR_Cli2: 240,
-                startBVR_Serial: 280,
+                startBVR_Ref: 225,
+                startBVR_Cli2: 245,
+                startBVR_Serial: 278,
                 logoHeight: 22,
                 logoWidth: 71,
                 grayText: '#999999',
@@ -144,7 +146,12 @@
                 }
             };
 
-            //currency format A FAIRE
+            //currency format
+            function formatCurrency(currency) {
+                currency = new Intl.NumberFormat("de-CH", {style: 'currency', currency: 'CHF'}).format(currency);
+
+                return currency
+            };
 
             //generate header
             function getHeader() {
@@ -155,14 +162,23 @@
                 pdf.autoTable({
                     startY: env.startHeader,
                     theme: env.theme,
-                    tableWidth: env.tableWidth,
+                    tableWidth: env.widthNoBill,
                     margin: {
-                        left: 150,
+                        left: env.marginFloatRight
                     },
                     styles: {
                         font: env.font,
                         cellPadding: env.cellPadding,
+                        lineWidth: 1,
                         halign: 'right',
+                    },
+                    columnStyles: {
+                        0: {
+                            cellWidth:'auto',
+                        },
+                        1: {
+                            cellWidth:'wrap',
+                        }
                     },
                     body: [
                         [{
@@ -182,19 +198,29 @@
                             }
                         }],
                         [{
-                            content: "Date d'émission:"
+                            content: "Date d'émission:",
+                            styles: {
+                                halign: 'right',
+                                cellWidth:'auto',
+                            }
                         }, {
                             content: bill.dateStart,
                             styles: {
                                 fontStyle: 'bold',
+                                cellWidth:'wrap',
                             }
                         }],
                         [{
-                            content: "Échéance:"
+                            content: "Échéance:",
+                            styles: {
+                                halign: 'right',
+                                cellWidth: 'auto'
+                            }
                         }, {
                             content: bill.dateEnd,
                             styles: {
                                 fontStyle: 'bold',
+                                cellWidth: 'wrap'
                             }
                         }],
                         [{
@@ -736,7 +762,8 @@
                 startY: env.startMainTable,
                 margin: {
                     left: env.marginLeft,
-                    bottom: env.marginBottom
+                    bottom: env.marginBottom,
+                    //right: 15
                 },
                 theme: env.theme,
                 styles: {
@@ -806,7 +833,7 @@
             /******
             * BVR * 
             *******/
-            
+
             //Bank data
             pdf.autoTable({
                 startY: env.startBVR_Bank,
@@ -925,11 +952,11 @@
 
             //Bank acc + price
             pdf.setFontSize(10);
-            pdf.text(env.marginBVR+15, env.startBVR_Acc, '' + bill.bank.account);
-            pdf.text(env.marginBVR+15, env.startBVR_Tot, '' + bill.total);
+            pdf.text(bill.bank.account, 42, env.startBVR_Acc);
+            pdf.text('' + bill.total, 17, env.startBVR_Tot);
 
-            pdf.text(env.marginBVR2+20, env.startBVR_Acc, '' + bill.bank.account);
-            pdf.text(env.marginBVR2+20, env.startBVR_Tot, '' + bill.total);
+            pdf.text(bill.bank.account, 103, env.startBVR_Acc);
+            pdf.text('' + bill.total, 79, env.startBVR_Tot);
 
             //Client data
             pdf.autoTable({
