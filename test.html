@@ -38,6 +38,7 @@
                 title: 'Migration messagerie locale vers Microsoft Office 365',
                 dateStart: '17.03.2020',
                 dateEnd: '16.04.2020',
+                infoTVA: 'CHE-631.761 TVA',
                 hourlyRate: 150,
                 client: {
                     id: 216157,
@@ -48,7 +49,9 @@
                 },
                 bank: {
                     name: 'Banque Contonale du Valais',
-                    city: '1951 Sion'
+                    city: '1951 Sion',
+                    account: '01-1502-9',
+                    ref: '10 21390 00002 16157 92003 01740'
                 },
                 lines: [
                     { description: 'Licence BitTitan MigrationWiz', type: 1, price: 20, quantity: 65, total: 1300 },
@@ -74,7 +77,8 @@
                     { description: '19Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: 'Postmigration', type: 2, price: 150, quantity: 16, total: 2400 }
                 ],
-                total: 432432
+                total: 16383.85,
+                serial: '0100016383858>102139000002161579200301740+ 010015029'
             };
 
             let cinfo = {
@@ -88,8 +92,38 @@
 
             let env = {
                 font: 'roboto',
+                fontSize: 8,
                 theme: 'plain',
-                marginLeft: 15
+                tableWidth: 'wrap',
+                cellPadding: 0.5,
+                footerPadding: 0.1,
+                footerFontSize: 6,
+                marginLeft: 15,
+                marginBottom: 40,
+                marginBVR: 5,
+                marginBVR2: 65,
+                marginBVR3: 130,
+                marginSerial: 90,
+                startHeader: 15,
+                startAdress: 50,
+                startMainTable: 90,
+                startNoClient: 70,
+                startBVR_Bank: 200,
+                startBVR_CInfo: 215,
+                startBVR_Acc: 240,
+                startBVR_Tot: 245,
+                startBVR_Cli: 255,
+                startBVR_Ref: 230,
+                startBVR_Cli2: 240,
+                startBVR_Serial: 280,
+                logoHeight: 22,
+                logoWidth: 71,
+                grayText: '#999999',
+                blueText: '#1750a0',
+                redText: '#cc0000',
+                yellowBox: [255, 255, 224],
+                grayBox: [192, 192, 192],
+                softGrayBox: [220, 220, 220]
             };
 
             /* FUNCTIONS */
@@ -115,19 +149,19 @@
             //generate header
             function getHeader() {
                 //logo
-                pdf.addImage(logoImg, "PNG", 15, 15, 71, 22);
+                pdf.addImage(logoImg, "PNG", env.marginLeft, env.startHeader, env.logoWidth, env.logoHeight);
 
                 //info facture
                 pdf.autoTable({
-                    startY: 15,
-                    theme: 'plain',
-                    tableWidth: 'wrap',
+                    startY: env.startHeader,
+                    theme: env.theme,
+                    tableWidth: env.tableWidth,
                     margin: {
-                        left: 155,
+                        left: 150,
                     },
                     styles: {
-                        font: 'roboto',
-                        cellPadding: 0.5,
+                        font: env.font,
+                        cellPadding: env.cellPadding,
                         halign: 'right',
                     },
                     body: [
@@ -135,7 +169,7 @@
                             content: "N° de facture",
                             colSpan: 2,
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         }],
@@ -144,7 +178,7 @@
                             colSpan: 2,
                             styles: {
                                 fontStyle: 'bold',
-                                textColor: '#1750a0'
+                                textColor: env.blueText
                             }
                         }],
                         [{
@@ -164,7 +198,7 @@
                             }
                         }],
                         [{
-                            content: "CHE-631.761 TVA",
+                            content: bill.infoTVA,
                             colSpan: 2
                         }]
                     ]
@@ -172,15 +206,15 @@
 
                 // Addresse client
                 pdf.autoTable({
-                    startY: 53,
-                    theme: 'plain',
-                    tableWidth: 'wrap',
+                    startY: env.startAdress,
+                    theme: env.theme,
+                    tableWidth: env.tableWidth,
                     margin: {
-                        left: 22
+                        left: env.marginLeft
                     },
                     styles: {
-                        font: 'roboto',
-                        cellPadding: 0.5,
+                        font: env.font,
+                        cellPadding: env.cellPadding,
                     },
                     body: [
                         [{
@@ -199,17 +233,17 @@
 
                 //numero client
                 pdf.autoTable({
-                    startY: 70,
-                    theme: 'plain',
+                    startY: env.startNoClient,
+                    theme: env.theme,
                     margin: {
                         left: 130,
                     },
 
                     styles: {
-                        font: 'roboto',
-                        textColor: '#999999',
+                        font: env.font,
+                        textColor: env.grayText,
                         //yellow box
-                        fillColor: [255, 255, 224]
+                        fillColor: env.yellowBox
                     },
                     columnStyles: {
                         0: {
@@ -257,7 +291,7 @@
                 })
             }
 
-            //main body data
+            //generate body
             function getBody(idTable) {
                 let body = [];
 
@@ -271,15 +305,14 @@
                             styles: {
                                 halign: 'center',
                                 fontStyle: 'bold',
-                                //gray box
-                                fillColor: [192, 192, 192]
+                                fillColor: env.grayBox
                             }
                         }],
                         //header
                         [{
                             content: 'Article',
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         }, {
@@ -288,21 +321,21 @@
                         {
                             content: 'Prix unitaire',
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         },
                         {
                             content: 'Quantité',
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         },
                         {
                             content: 'Montant Totale',
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         }]
@@ -315,8 +348,7 @@
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     }]);
                     //1st content
@@ -345,8 +377,7 @@
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     }]);
                     //2nd content
@@ -373,8 +404,7 @@
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     }]);
                     body.push([{
@@ -406,8 +436,8 @@
                         content: 'Tarif horaire hors TVA: ',
                         styles: {
                             halign: 'left',
-                            fillColor: [255, 255, 224],
-                            textColor: '#999999'
+                            fillColor: env.yellowBox,
+                            textColor: env.grayText
                         }
                     },
                     {
@@ -415,8 +445,8 @@
                         content: bill.hourlyRate.toFixed(2) + ' CHF',
                         styles: {
                             halign: 'right',
-                            fillColor: [255, 255, 224],
-                            textColor: '#999999'
+                            fillColor: env.yellowBox,
+                            textColor: env.grayText
                         }
                     },
                     {
@@ -445,8 +475,7 @@
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     },
                     {
@@ -454,8 +483,7 @@
                         styles: {
                             halign: 'right',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     }]);
 
@@ -469,8 +497,7 @@
                             styles: {
                                 halign: 'center',
                                 fontStyle: 'bold',
-                                //gray box
-                                fillColor: [192, 192, 192]
+                                fillColor: env.grayBox
                             }
                         }],
                         //header
@@ -478,14 +505,14 @@
                             content: 'Article',
                             colSpan: 4,
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         },
                         {
                             content: 'Montant Totale',
                             styles: {
-                                textColor: '#999999',
+                                textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
                         }]
@@ -524,8 +551,7 @@
                         content: '',
                         colSpan: 5,
                         styles: {
-                            //soft gray box
-                            fillColor: [220, 220, 220],
+                            fillColor: env.softGrayBox,
                             drawCell: 1
                         }
                     }]);
@@ -540,8 +566,8 @@
                         content: 'Tarif horaire hors TVA: ',
                         styles: {
                             halign: 'left',
-                            fillColor: [255, 255, 224],
-                            textColor: '#999999'
+                            fillColor: env.yellowBox,
+                            textColor: env.grayText
                         }
                     },
                     {
@@ -549,8 +575,8 @@
                         content: bill.hourlyRate.toFixed(2) + ' CHF',
                         styles: {
                             halign: 'right',
-                            fillColor: [255, 255, 224],
-                            textColor: '#999999'
+                            fillColor: env.yellowBox,
+                            textColor: env.grayText
                         }
                     },
                     {
@@ -604,8 +630,7 @@
                         styles: {
                             halign: 'left',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     },
                     {
@@ -613,8 +638,7 @@
                         styles: {
                             halign: 'right',
                             fontStyle: 'bold',
-                            //soft gray box
-                            fillColor: [220, 220, 220]
+                            fillColor: env.softGrayBox
                         }
                     }]);
                 }
@@ -630,8 +654,7 @@
                     styles: {
                         halign: 'center',
                         fontStyle: 'bold',
-                        //gray box
-                        fillColor: [192, 192, 192]
+                        fillColor: env.grayBox
                     }
                 }]);
                 body.push([{
@@ -640,7 +663,7 @@
                     styles: {
                         halign: 'left',
                         fontStyle: 'bold',
-                        textColor: '#cc0000'
+                        textColor: env.redText
                     }
                 }]);
                 body.push([{
@@ -656,7 +679,7 @@
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold',
-                        textColor: '#cc0000'
+                        textColor: env.redText
                     }
                 }]);
 
@@ -664,6 +687,7 @@
                 return body
             }
 
+            //generate footer
             function getFooter() {
                 let footer = [];
 
@@ -698,99 +722,128 @@
                 return footer
             }
 
-            /* PAGE 1 */
             //set total and subTotal
             calculateTot();
 
-            /*getHeader();
+            /*************
+            * First Page *
+            **************/
 
-            //tableau principal
-            pdf.autoTable({
-                startY: 90,
-                margin: {
-                    bottom: 40
-                },
-                theme: 'plain',
-                styles: {
-                    font: 'roboto',
-                },
-                columnStyles: {
-                    2: {
-                        halign: 'right',
-                        cellWidth: 'wrap'
-                    },
-                    3: {
-                        halign: 'center',
-                        cellWidth: 'wrap'
-                    },
-                    4: {
-                        halign: 'right',
-                        cellWidth: 'wrap'
-                    }
-                },
-                body: getBody(1),
-                didDrawPage: function (data) {
-
-                    // jsPDF 1.4+ uses getWidth, <1.4 uses .width
-                    pdf.autoTable({
-                        startY: pdf.internal.pageSize.height - 34,
-                        margin: data.settings.margin.left,
-                        theme: 'plain',
-                        styles: {
-                            font: 'roboto',
-                            fontSize: 6,
-                            cellPadding: 0.1,
-                        },
-                        body: getFooter()
-                    });
-                }
-            });*/
-
-            //pdf.addPage();
-
-            /* LAST PAGE */
             getHeader();
 
             //Main Data
             pdf.autoTable({
-                startY: 90,
+                startY: env.startMainTable,
                 margin: {
-                    left: 22,
+                    left: env.marginLeft,
+                    bottom: env.marginBottom
                 },
-                theme: 'plain',
+                theme: env.theme,
                 styles: {
-                    font: 'roboto',
-                    fontSize: 8
+                    font: env.font,
                 },
                 columnStyles: {
                     2: {
-                        halign: 'right',
-                        cellWidth: 'wrap'
+                        halign: 'right'
                     },
                     3: {
-                        halign: 'center',
-                        cellWidth: 'wrap'
+                        halign: 'center'
                     },
                     4: {
-                        halign: 'right',
-                        cellWidth: 'wrap'
+                        halign: 'right'
+                    }
+                },
+                body: getBody(1),
+                didDrawPage: function (data) {
+                    // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+                    pdf.autoTable({
+                        startY: pdf.internal.pageSize.height - env.marginBottom+10,
+                        margin: data.settings.margin.left,
+                        theme: env.theme,
+                        styles: {
+                            font: env.font,
+                            fontSize: env.footerFontSize,
+                            cellPadding: env.footerPadding,
+                        },
+                        body: getFooter()
+                    });
+                }
+            });
+
+            pdf.addPage();
+
+            /************
+            * Last Page * 
+            *************/
+
+            getHeader();
+
+            //Main Data
+            pdf.autoTable({
+                startY: env.startMainTable,
+                margin: {
+                    left: env.marginLeft,
+                },
+                theme: env.theme,
+                styles: {
+                    font: env.font,
+                    fontSize: env.fontSize
+                },
+                columnStyles: {
+                    2: {
+                        halign: 'right'
+                    },
+                    3: {
+                        halign: 'center'
+                    },
+                    4: {
+                        halign: 'right'
                     }
                 },
                 body: getBody(2)
             });
 
-            /* BVR */
+            /******
+            * BVR * 
+            *******/
+            
             //Bank data
             pdf.autoTable({
-                startY: 200,
+                startY: env.startBVR_Bank,
                 theme: env.theme,
-                tableWidth: 'wrap',
+                tableWidth: env.tableWidth,
                 margin: {
-                    left: 5
+                    left: env.marginBVR
                 },
                 styles: {
                     font: env.font,
-                    cellPadding: 0.5,
+                    cellPadding: env.cellPadding,
+                },
+                body: [
+                    [{
+                        content: bill.bank.name,
+                        styles: {
+                            
+                        }
+                    }],
+                    [{
+                        content: bill.bank.city,
+                        styles: {
+                        }
+                    }]
+                ]
+            });
+
+            pdf.autoTable({
+                startY: env.startBVR_Bank,
+                theme: env.theme,
+                tableWidth: env.tableWidth,
+                margin: {
+                    left: env.marginBVR2
+                },
+                styles: {
+                    font: env.font,
+                    cellPadding: env.cellPadding,
                 },
                 body: [
                     [{
@@ -809,15 +862,46 @@
 
             //CInfo data
             pdf.autoTable({
-                startY: 215,
+                startY: env.startBVR_CInfo,
                 theme: env.theme,
-                tableWidth: 'wrap',
+                tableWidth: env.tableWidth,
                 margin: {
-                    left: 5
+                    left: env.marginBVR
                 },
                 styles: {
                     font: env.font,
-                    cellPadding: 0.5,
+                    cellPadding: env.cellPadding,
+                },
+                body: [
+                    [{
+                        content: cinfo.name,
+                        styles: {
+                            
+                        }
+                    }],
+                    [{
+                        content: cinfo.street,
+                        styles: {
+                        }
+                    }],
+                    [{
+                        content: cinfo.city,
+                        styles: {
+                        }
+                    }]
+                ]
+            });
+
+            pdf.autoTable({
+                startY: env.startBVR_CInfo,
+                theme: env.theme,
+                tableWidth: env.tableWidth,
+                margin: {
+                    left: env.marginBVR2
+                },
+                styles: {
+                    font: env.font,
+                    cellPadding: env.cellPadding,
                 },
                 body: [
                     [{
@@ -840,22 +924,28 @@
             });
 
             //Bank acc + price
+            pdf.setFontSize(10);
+            pdf.text(env.marginBVR+15, env.startBVR_Acc, '' + bill.bank.account);
+            pdf.text(env.marginBVR+15, env.startBVR_Tot, '' + bill.total);
+
+            pdf.text(env.marginBVR2+20, env.startBVR_Acc, '' + bill.bank.account);
+            pdf.text(env.marginBVR2+20, env.startBVR_Tot, '' + bill.total);
 
             //Client data
             pdf.autoTable({
-                startY: 240,
+                startY: env.startBVR_Cli,
                 theme: env.theme,
-                tableWidth: 'wrap',
+                tableWidth: env.tableWidth,
                 margin: {
-                    left: 5
+                    left: env.marginBVR
                 },
                 styles: {
                     font: env.font,
-                    cellPadding: 0.5,
+                    cellPadding: env.cellPadding,
                 },
                 body: [
                     [{
-                        content: '10 21390',
+                        content: bill.bank.ref,
                         styles: {
                             
                         }
@@ -885,6 +975,48 @@
                 ]
             });
 
+            pdf.text(env.marginBVR3, env.startBVR_Ref, '' + bill.bank.ref);
+
+            pdf.autoTable({
+                startY: env.startBVR_Cli2,
+                theme: env.theme,
+                tableWidth: env.tableWidth,
+                margin: {
+                    left: env.marginBVR3
+                },
+                styles: {
+                    font: env.font,
+                    cellPadding: env.cellPadding,
+                },
+                body: [
+                    [{
+                        content: bill.client.name,
+                        styles: {
+                        }
+                    }],
+                    [{
+                        content: bill.client.street,
+                        styles: {
+                        }
+                    }]
+                    ,
+                    [{
+                        content: bill.client.postal,
+                        styles: {
+                        }
+                    }]
+                    ,
+                    [{
+                        content: bill.client.city,
+                        styles: {
+                        }
+                    }]
+                ]
+            });
+
+            //BVR Serial
+            pdf.text(env.marginSerial, env.startBVR_Serial, '' + bill.serial);
+            
             var string = pdf.output("datauristring");
             $("iframe").attr("src", string);
         });
