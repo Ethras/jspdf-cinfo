@@ -24,19 +24,10 @@
         $(document).ready(function () {
             var pdf = new jsPDF("p", "mm", "a4");
 
-            /* DATA */
+            /******* 
+            * DATA *
+            ********/
             const TVA = 7.7;
-            let totalData = {
-                total: 0,
-                subTotalSoftware: 0,
-                subTotalService: 0
-            };
-
-            let booleanType = {
-                software: false,
-                service: false,
-                unknown: false
-            }
 
             /* bill data */
             let bill = {
@@ -53,62 +44,76 @@
                     postal: 'case postale 6868',
                     city: '1002 Lausanne'
                 },
+                cinfo: {
+                    name: 'C Informatique Sàrl',
+                    street: 'Route de Larret 19',
+                    city: '1870 Monthey',
+                    phone: '+41 24 550 56 00',
+                    mail: 'informatique@cinformatique.ch',
+                    web: 'www.cinformatique.ch'
+                },
                 bank: {
                     name: 'Banque Contonale du Valais',
                     city: '1951 Sion',
                     account: '01-1502-9',
                     ref: '10 21390 00002 16157 92003 01740'
                 },
-                type: ['Article', 'Service', '3 ème'],
                 lines: [
                     { description: 'Licence BitTitan MigrationWiz', type: 2, price: 20, quantity: 65, total: 1300 },
-                    { description: 'Prémigration', type: 2, price: 150, quantity: 28, total: 4200 },
-                    { description: '1Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '2Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '3Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '4Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '5Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '6Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '7Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '8Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '9Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '10Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '11Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '12Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '13Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '14Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '15Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '16Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '17Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '18Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: '19Migration individuelle des emails', type: 2, price: 112.5, quantity: 65, total: 7312.5 },
-                    { description: 'Postmigration', type: 2, price: 150, quantity: 16, total: 2400 }
+                    { description: 'Prémigration', type: 3, price: 150, quantity: 28, total: 4200 },
+                    { description: '1Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '2Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '3Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '4Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '5Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '6Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '7Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '8Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '9Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '10Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '11Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '12Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '13Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '14Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '15Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '16Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '17Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '18Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '19Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: 'Postmigration', type: 3, price: 150, quantity: 16, total: 2400 },
+                    { description: '20Migration individuelle des emails', type: 4, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '21Migration individuelle des emails', type: 5, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '22Migration individuelle des emails', type: 5, price: 112.5, quantity: 65, total: 7312.5 },
                 ],
+                totalWoTVA: 15212.5,
+                totalTVA: 1171.36,
                 total: 16383.85,
                 serial: '0100016383858>102139000002161579200301740+ 010015029'
             };
 
-            let cinfo = {
-                name: 'C Informatique Sàrl',
-                street: 'Route de Larret 19',
-                city: '1870 Monthey',
-                phone: '+41 24 550 56 00',
-                mail: 'informatique@cinformatique.ch',
-                web: 'www.cinformatique.ch'
+            let splittedLines = {
+                hardware: { lines: [], name: 'Matériel', subTotal: 0 },
+                software: { lines: [], name: 'Logiciel', subTotal: 0 },
+                service: { lines: [], name: 'Service', subTotal: 0 },
+                various: { lines: [], name: 'Divers', subTotal: 0 },
+                discount: { lines: [], name: 'Rabais', subTotal: 0 },
             };
 
+            //environment data
             let env = {
                 font: 'roboto',
+                fontBVR: 'roboto',
                 fontSize: 8,
+                fontSizeSecondary: 8,
+                fontSizeFooter: 8,
                 theme: 'plain',
                 tableWidth: 'wrap',
-                widthRightElements: 70,
                 cellPadding: 0.5,
                 footerPadding: 0.1,
                 footerFontSize: 6,
                 marginLeft: 15,
                 marginBottom: 40,
-                marginFloatRight: 125,
+                marginNoBill: 155,
                 marginBVR: 5,
                 marginBVR2: 65,
                 marginBVR3: 125,
@@ -135,25 +140,10 @@
                 softGrayBox: [220, 220, 220]
             };
 
-            /* FUNCTIONS */
-            //calculate total and subTotal
-            function calculateTot() {
-                for (let i = 0; i < bill.lines.length; i++) {
-                    //total
-                    totalData.total += bill.lines[i].price * bill.lines[i].quantity;
-
-                    //subtotal
-                    if (bill.lines[i].type == 1) {
-                        totalData.subTotalSoftware += bill.lines[i].price * bill.lines[i].quantity;
-                    }
-                    if (bill.lines[i].type == 2) {
-                        totalData.subTotalService += bill.lines[i].price * bill.lines[i].quantity;
-                    }
-
-                }
-            };
-
-            //currency format
+            /************
+            * FUNCTIONS *
+            *************/
+            //format currency
             function formatCurrency(currency) {
                 currency = new Intl.NumberFormat("de-CH", { style: 'currency', currency: 'CHF' }).format(currency);
 
@@ -169,23 +159,14 @@
                 pdf.autoTable({
                     startY: env.startHeader,
                     theme: env.theme,
-                    tableWidth: env.widthNoBill,
+                    tableWidth: env.tableWidth,
                     margin: {
-                        left: env.marginFloatRight
+                        left: env.marginNoBill
                     },
                     styles: {
                         font: env.font,
                         cellPadding: env.cellPadding,
-                        lineWidth: 1,
                         halign: 'right',
-                    },
-                    columnStyles: {
-                        0: {
-                            cellWidth: 'auto',
-                        },
-                        1: {
-                            cellWidth: 'wrap',
-                        }
                     },
                     body: [
                         [{
@@ -208,26 +189,22 @@
                             content: "Date d'émission:",
                             styles: {
                                 halign: 'right',
-                                cellWidth: 'auto',
                             }
                         }, {
                             content: bill.dateStart,
                             styles: {
                                 fontStyle: 'bold',
-                                cellWidth: 'wrap',
                             }
                         }],
                         [{
                             content: "Échéance:",
                             styles: {
                                 halign: 'right',
-                                cellWidth: 'auto'
                             }
                         }, {
                             content: bill.dateEnd,
                             styles: {
                                 fontStyle: 'bold',
-                                cellWidth: 'wrap'
                             }
                         }],
                         [{
@@ -292,75 +269,59 @@
 
             }
 
-            //generate main data for body
-            function generateData(billLineType, data) {
+            //split raw data and calculate sub total
+            function setData() {
                 bill.lines.forEach(i => {
-                    if (i.type == billLineType) {
-                        data.push([
-                            {
-                                content: i.description,
-                                colSpan: 2,
-                                styles: {
-                                }
-                            },
-                            {
-                                content: i.price.toFixed(2) + ' CHF',
-                                styles: {
-                                }
-                            },
-                            {
-                                content: i.quantity.toFixed(2),
-                                styles: {
-                                }
-                            },
-                            {
-                                content: i.total.toFixed(2) + ' CHF',
-                                styles: {
-                                }
-                            }
-                        ]);
+                    switch (i.type) {
+                        case 1:
+                            splittedLines.hardware.lines.push(i);
+                            splittedLines.hardware.subTotal += i.total;
+                            break;
+                        case 2:
+                            splittedLines.software.lines.push(i);
+                            splittedLines.software.subTotal += i.total;
+                            break;
+                        case 3:
+                            splittedLines.service.lines.push(i);
+                            splittedLines.service.subTotal += i.total;
+                            break;
+                        case 4:
+                            splittedLines.various.lines.push(i);
+                            splittedLines.various.subTotal += i.total;
+                            break;
+                        case 5:
+                            splittedLines.discount.lines.push(i);
+                            splittedLines.discount.subTotal += i.total;
+                            break;
                     }
                 })
             };
 
-            function checkType() {
-                bill.lines.forEach(i => {
-                    if (i.type == 1) {
-                        booleanType.software = true;
-                    } if (i.type == 2) {
-                        booleanType.service = true;
-                    } if (i.type == 3) {
-                        booleanType.unknown = true;
-                    }
-                })
-            };
-
-            //generate body
-            function getBody(idTable) {
+            //generate body data
+            function getData(idTable) {
                 let body = [];
+                //title
+                body = [[{
+                    content: 'Facture - ' + bill.title,
+                    colSpan: 5,
+                    styles: {
+                        halign: 'center',
+                        fontStyle: 'bold',
+                        fillColor: env.grayBox
+                    }
+                }]];
 
-                if (idTable == 1) {
-                    //title+header
-                    body = [
-                        //title
-                        [{
-                            content: 'Facture - ' + bill.title,
-                            colSpan: 5,
-                            styles: {
-                                halign: 'center',
-                                fontStyle: 'bold',
-                                fillColor: env.grayBox
-                            }
-                        }],
-                        //header
-                        [{
+                //first page table or last page table
+                switch (idTable) {
+                    case 1: {
+                        //header table 1
+                        body.push([{
                             content: 'Article',
+                            colSpan: 2,
                             styles: {
                                 textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
-                        }, {
-                            content: '',
                         },
                         {
                             content: 'Prix unitaire',
@@ -377,177 +338,78 @@
                             }
                         },
                         {
-                            content: 'Montant Totale',
+                            content: 'Montant Total',
                             styles: {
                                 textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
-                        }]
-                    ];
+                        }]);
 
-                    if (booleanType.software == true) {
-                        //header 1st content
-                        body.push([{
-                            content: 'Logiciel',
-                            colSpan: 5,
-                            styles: {
-                                halign: 'left',
-                                fontStyle: 'bold',
-                                fillColor: env.softGrayBox
+                        for (const key in splittedLines) {
+                            //check non vide
+                            if (splittedLines[key].lines.length > 0) {
+                                //header
+                                body.push([{
+                                    content: splittedLines[key].name,
+                                    colSpan: 5,
+                                    styles: {
+                                        halign: 'left',
+                                        fontStyle: 'bold',
+                                        fillColor: env.softGrayBox
+                                    }
+                                }]);
+                                //lines data
+                                splittedLines[key].lines.forEach(i => {
+                                    body.push([
+                                        {
+                                            content: i.description,
+                                            colSpan: 2,
+                                            styles: {
+                                            }
+                                        },
+                                        {
+                                            content: formatCurrency(i.price),
+                                            styles: {
+                                            }
+                                        },
+                                        {
+                                            content: i.quantity.toFixed(2),
+                                            styles: {
+                                            }
+                                        },
+                                        {
+                                            content: formatCurrency(i.total),
+                                            styles: {
+                                            }
+                                        }
+                                    ]);
+
+                                })
+
+                                //subtotal
+                                body.push([{
+                                    content: 'Sous total',
+                                    colSpan: 4,
+                                    styles: {
+                                        halign: 'right',
+                                        fontStyle: 'bold'
+                                    }
+                                },
+                                {
+                                    content: formatCurrency(splittedLines[key].subTotal),
+                                    styles: {
+                                        halign: 'right',
+                                        fontStyle: 'bold'
+                                    }
+                                }]);
                             }
-                        }]);
-                        //1st content
-                        generateData(1, body);
-                        //1st subtotal
-                        body.push([{
-                            content: 'Sous total',
-                            colSpan: 4,
-                            styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
-                            }
-                        },
-                        {
-                            content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
-                            styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
-                            }
-                        }]);
-                    } if (booleanType.service == true) {
-                        //header 2nd content
-                        body.push([{
-                            content: 'Service',
-                            colSpan: 5,
-                            styles: {
-                                halign: 'left',
-                                fontStyle: 'bold',
-                                fillColor: env.softGrayBox
-                            }
-                        }]);
-                        //2nd content
-                        generateData(2, body);
-                        //2nd subtotal
-                        body.push([{
-                            content: 'Sous total',
-                            colSpan: 4,
-                            styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
-                            }
-                        },
-                        {
-                            content: totalData.subTotalService.toFixed(2) + ' CHF',
-                            styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
-                            }
-                        }]);
-                        body.push([{
-                            content: 'Facture ' + bill.id + ': ' + bill.title,
-                            colSpan: 5,
-                            styles: {
-                                halign: 'left',
-                                fontStyle: 'bold',
-                                fillColor: env.softGrayBox
-                            }
-                        }]);
+                        }
+
+                        break;
                     }
-
-                    //total box
-                    body.push([{
-                        content: '',
-                        colSpan: 5
-                    }]);
-                    body.push([{
-                        content: '',
-                        colSpan: 3
-                    },
-                    {
-                        content: 'SOUS-TOTAL',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.total.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        //yellow box
-                        content: 'Tarif horaire hors TVA: ',
-                        styles: {
-                            halign: 'left',
-                            fillColor: env.yellowBox,
-                            textColor: env.grayText
-                        }
-                    },
-                    {
-                        //yellow box
-                        content: bill.hourlyRate.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fillColor: env.yellowBox,
-                            textColor: env.grayText
-                        }
-                    },
-                    {
-                        content: ''
-                    },
-                    {
-                        content: 'TVA ' + TVA + '%',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: ((totalData.total / 100) * TVA).toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        content: '',
-                        colSpan: 3
-                    },
-                    {
-                        content: 'MONTANT TOTAL',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    },
-                    {
-                        content: ((totalData.total + (totalData.total / 100) * TVA)).toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    }]);
-
-                } if (idTable == 2) {
-                    //title+header
-                    body = [
-                        //title
-                        [{
-                            content: 'Facture - ' + bill.title,
-                            colSpan: 5,
-                            styles: {
-                                halign: 'center',
-                                fontStyle: 'bold',
-                                fillColor: env.grayBox
-                            }
-                        }],
-                        //header
-                        [{
+                    case 2: {
+                        //header table 2
+                        body.push([{
                             content: 'Article',
                             colSpan: 4,
                             styles: {
@@ -556,140 +418,126 @@
                             }
                         },
                         {
-                            content: 'Montant Totale',
+                            content: 'Montant Total',
                             styles: {
                                 textColor: env.grayText,
                                 fontStyle: 'bold'
                             }
-                        }]
-                    ];
-                    if (booleanType.software == true) {
-                        body.push([{
-                            content: 'Logiciel',
-                            colSpan: 4,
-                            styles: {
-                                fontStyle: 'bold'
+                        }]);
+
+                        for (const key in splittedLines) {
+                            //data
+                            if (splittedLines[key].lines.length > 0) {
+                                body.push([{
+                                    content: splittedLines[key].name,
+                                    colSpan: 4,
+                                    styles: {
+                                        fontStyle: 'bold'
+                                    }
+                                },
+                                {
+                                    content: formatCurrency(splittedLines[key].subTotal),
+                                    styles: {
+                                        halign: 'right',
+                                        fontStyle: 'bold'
+                                    }
+                                }]);
                             }
-                        },
-                        {
-                            content: totalData.subTotalSoftware.toFixed(2) + ' CHF',
+                        }
+
+                        //soft gray line
+                        body.push([{
+                            content: '',
+                            colSpan: 5,
                             styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
+                                fillColor: env.softGrayBox,
+                                drawCell: 1
                             }
                         }]);
-                    } if (booleanType.service == true) {
-                        body.push([{
-                            content: 'Service',
-                            colSpan: 4,
-                            styles: {
-                                fontStyle: 'bold'
-                            }
-                        },
-                        {
-                            content: totalData.subTotalService.toFixed(2) + ' CHF',
-                            styles: {
-                                halign: 'right',
-                                fontStyle: 'bold'
-                            }
-                        }]);
+
+                        break;
                     }
-                    //content
-                    body.push([{
-                        content: '',
-                        colSpan: 5,
-                        styles: {
-                            fillColor: env.softGrayBox,
-                            drawCell: 1
-                        }
-                    }]);
-                    body.push([{
-                        content: '',
-                        colSpan: 5
-                    }]);
-
-                    //hourly rate box
-                    body.push([{
-                        //yellow box
-                        content: 'Tarif horaire hors TVA: ',
-                        styles: {
-                            halign: 'left',
-                            fillColor: env.yellowBox,
-                            textColor: env.grayText
-                        }
-                    },
-                    {
-                        //yellow box
-                        content: bill.hourlyRate.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fillColor: env.yellowBox,
-                            textColor: env.grayText
-                        }
-                    },
-                    {
-                        content: '',
-                        colSpan: 3
-                    }]);
-
-                    //total box
-                    body.push([{
-                        content: '',
-                        colSpan: 3
-                    },
-                    {
-                        content: 'SOUS-TOTAL',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: totalData.total.toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        content: '',
-                        colSpan: 3
-                    },
-                    {
-                        content: 'TVA ' + TVA + '%',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold'
-                        }
-                    },
-                    {
-                        content: ((totalData.total / 100) * TVA).toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold'
-                        }
-                    }]);
-                    body.push([{
-                        content: '',
-                        colSpan: 3
-                    },
-                    {
-                        content: 'MONTANT TOTAL',
-                        styles: {
-                            halign: 'left',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    },
-                    {
-                        content: ((totalData.total + (totalData.total / 100) * TVA)).toFixed(2) + ' CHF',
-                        styles: {
-                            halign: 'right',
-                            fontStyle: 'bold',
-                            fillColor: env.softGrayBox
-                        }
-                    }]);
                 }
+
+                //total box
+                body.push([{
+                    content: '',
+                    colSpan: 5
+                }]);
+                body.push([{
+                    //yellow box
+                    content: 'Tarif horaire hors TVA: ',
+                    styles: {
+                        halign: 'left',
+                        fillColor: env.yellowBox,
+                        textColor: env.grayText
+                    }
+                },
+                {
+                    //yellow box
+                    content: formatCurrency(bill.hourlyRate),
+                    styles: {
+                        halign: 'right',
+                        fillColor: env.yellowBox,
+                        textColor: env.grayText
+                    }
+                },
+                {
+                    content: ''
+                },
+                {
+                    content: 'SOUS-TOTAL',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: formatCurrency(bill.totalWoTVA),
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 3
+                },
+                {
+                    content: 'TVA ' + TVA + '%',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold'
+                    }
+                },
+                {
+                    content: formatCurrency(bill.totalTVA),
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold'
+                    }
+                }]);
+                body.push([{
+                    content: '',
+                    colSpan: 3
+                },
+                {
+                    content: 'MONTANT TOTAL',
+                    styles: {
+                        halign: 'left',
+                        fontStyle: 'bold',
+                        fillColor: env.softGrayBox
+                    }
+                },
+                {
+                    content: formatCurrency(bill.total),
+                    styles: {
+                        halign: 'right',
+                        fontStyle: 'bold',
+                        fillColor: env.softGrayBox
+                    }
+                }]);
+
 
                 //info box
                 body.push([{
@@ -731,8 +579,7 @@
                     }
                 }]);
 
-
-                return body
+                return body;
             }
 
             //generate footer
@@ -748,19 +595,19 @@
                         }
                     }],
                     [{
-                        content: cinfo.name,
+                        content: bill.cinfo.name,
                         styles: {
                             halign: 'center'
                         }
                     }],
                     [{
-                        content: cinfo.street + ', ' + cinfo.city,
+                        content: bill.cinfo.street + ', ' + bill.cinfo.city,
                         styles: {
                             halign: 'center'
                         }
                     }],
                     [{
-                        content: cinfo.phone + ' - ' + cinfo.mail + ' - ' + cinfo.web,
+                        content: bill.cinfo.phone + ' - ' + bill.cinfo.mail + ' - ' + bill.cinfo.web,
                         styles: {
                             halign: 'center'
                         }
@@ -770,12 +617,10 @@
                 return footer
             }
 
-            //set total and subTotal
-            calculateTot();
-            checkType();
             /*************
             * First Page *
             **************/
+            setData();
 
             getHeader();
 
@@ -785,7 +630,6 @@
                 margin: {
                     left: env.marginLeft,
                     bottom: env.marginBottom,
-                    //right: 15
                 },
                 theme: env.theme,
                 styles: {
@@ -802,7 +646,7 @@
                         halign: 'right'
                     }
                 },
-                body: getBody(1),
+                body: getData(1),
                 didDrawPage: function (data) {
                     // jsPDF 1.4+ uses getWidth, <1.4 uses .width
                     pdf.autoTable({
@@ -849,7 +693,7 @@
                         halign: 'right'
                     }
                 },
-                body: getBody(2)
+                body: getData(2)
             });
 
             /******
@@ -882,7 +726,6 @@
                     }]
                 ]
             });
-
             pdf.autoTable({
                 startY: env.startBVR_Bank,
                 theme: env.theme,
@@ -923,24 +766,23 @@
                 },
                 body: [
                     [{
-                        content: cinfo.name,
+                        content: bill.cinfo.name,
                         styles: {
 
                         }
                     }],
                     [{
-                        content: cinfo.street,
+                        content: bill.cinfo.street,
                         styles: {
                         }
                     }],
                     [{
-                        content: cinfo.city,
+                        content: bill.cinfo.city,
                         styles: {
                         }
                     }]
                 ]
             });
-
             pdf.autoTable({
                 startY: env.startBVR_CInfo,
                 theme: env.theme,
@@ -954,25 +796,25 @@
                 },
                 body: [
                     [{
-                        content: cinfo.name,
+                        content: bill.cinfo.name,
                         styles: {
 
                         }
                     }],
                     [{
-                        content: cinfo.street,
+                        content: bill.cinfo.street,
                         styles: {
                         }
                     }],
                     [{
-                        content: cinfo.city,
+                        content: bill.cinfo.city,
                         styles: {
                         }
                     }]
                 ]
             });
 
-            //Bank acc + price
+            //Bank acc + price A FAIRE fonction 
             pdf.setFontSize(10);
             pdf.text(bill.bank.account, 42, env.startBVR_Acc);
             pdf.text('' + bill.total, 17, env.startBVR_Tot);
@@ -1023,9 +865,7 @@
                     }]
                 ]
             });
-
             pdf.text(env.marginBVR3, env.startBVR_Ref, '' + bill.bank.ref);
-
             pdf.autoTable({
                 startY: env.startBVR_Cli2,
                 theme: env.theme,
@@ -1066,6 +906,7 @@
             //BVR Serial
             pdf.text(env.marginSerial, env.startBVR_Serial, '' + bill.serial);
 
+            //generate page
             var string = pdf.output("datauristring");
             $("iframe").attr("src", string);
         });
