@@ -103,24 +103,25 @@
             let env = {
                 font: 'roboto',
                 fontBVR: 'roboto',
-                fontSize: 8,
-                fontSizeSecondary: 8,
-                fontSizeFooter: 8,
+                fontSize: 10,
+                fontSizeTitle: 11,
+                fontSizeSecondary: 9,
+                fontSizeFooter: 7,
                 theme: 'plain',
                 tableWidth: 'wrap',
-                cellPadding: 0.5,
+                cellPadding: 0.2,
                 footerPadding: 0.1,
-                footerFontSize: 6,
                 marginLeft: 15,
                 marginBottom: 40,
                 marginNoBill: 155,
+                marginNoClient: 117,
                 marginBVR: 5,
                 marginBVR2: 65,
                 marginBVR3: 125,
                 marginSerial: 90,
                 startHeader: 15,
                 startAdress: 50,
-                startMainTable: 85,
+                startMainTable: 87,
                 startNoClient: 75,
                 startBVR_Bank: 200,
                 startBVR_CInfo: 214,
@@ -132,6 +133,7 @@
                 startBVR_Serial: 278,
                 logoHeight: 22,
                 logoWidth: 71,
+                cellHeight: 6,
                 grayText: '#999999',
                 blueText: '#1750a0',
                 redText: '#cc0000',
@@ -165,6 +167,7 @@
                     },
                     styles: {
                         font: env.font,
+                        fontSize: env.fontSizeSecondary,
                         cellPadding: env.cellPadding,
                         halign: 'right',
                     },
@@ -174,7 +177,8 @@
                             colSpan: 2,
                             styles: {
                                 textColor: env.grayText,
-                                fontStyle: 'bold'
+                                fontStyle: 'bold',
+                                fontSize: env.fontSizeTitle,
                             }
                         }],
                         [{
@@ -182,7 +186,9 @@
                             colSpan: 2,
                             styles: {
                                 fontStyle: 'bold',
-                                textColor: env.blueText
+                                textColor: env.blueText,
+                                fontSize: env.fontSizeTitle,
+                                minCellHeight: env.cellHeight,
                             }
                         }],
                         [{
@@ -224,13 +230,15 @@
                     },
                     styles: {
                         font: env.font,
+                        fontSize: env.fontSize,
                         cellPadding: env.cellPadding,
                     },
                     body: [
                         [{
                             content: 'Adresse du client',
                             styles: {
-                                fontStyle: 'bold'
+                                fontStyle: 'bold',
+                                minCellHeight: env.cellHeight
                             }
                         }],
                         [{ content: bill.client.name }],
@@ -246,21 +254,19 @@
                     startY: env.startNoClient,
                     theme: env.theme,
                     margin: {
-                        left: 130,
+                        left: env.marginNoClient,
                     },
                     styles: {
                         font: env.font,
+                        fontSize: env.fontSizeSecondary,
                         textColor: env.grayText,
-                        //yellow box
-                        fillColor: env.yellowBox
+                        fillColor: env.yellowBox,
+                        fontStyle: 'bold'
                     },
                     columnStyles: {
-                        0: {
-                            fontStyle: 'bold',
-                        },
                         1: {
-                            halign: 'right',
-                        },
+                            halign: 'right'
+                        }
                     },
                     body: [
                         ['Numéro de client', bill.client.id]
@@ -306,6 +312,7 @@
                     colSpan: 5,
                     styles: {
                         halign: 'center',
+                        fontSize: env.fontSizeTitle,
                         fontStyle: 'bold',
                         fillColor: env.grayBox
                     }
@@ -346,7 +353,6 @@
                         }]);
 
                         for (const key in splittedLines) {
-                            //check non vide
                             if (splittedLines[key].lines.length > 0) {
                                 //header
                                 body.push([{
@@ -363,24 +369,16 @@
                                     body.push([
                                         {
                                             content: i.description,
-                                            colSpan: 2,
-                                            styles: {
-                                            }
+                                            colSpan: 2
                                         },
                                         {
-                                            content: formatCurrency(i.price),
-                                            styles: {
-                                            }
+                                            content: formatCurrency(i.price)
                                         },
                                         {
-                                            content: i.quantity.toFixed(2),
-                                            styles: {
-                                            }
+                                            content: i.quantity.toFixed(2)
                                         },
                                         {
-                                            content: formatCurrency(i.total),
-                                            styles: {
-                                            }
+                                            content: formatCurrency(i.total)
                                         }
                                     ]);
 
@@ -388,23 +386,23 @@
 
                                 //subtotal
                                 body.push([{
+                                    content: '',
+                                    colSpan: 3
+                                },
+                                {
                                     content: 'Sous total',
-                                    colSpan: 4,
                                     styles: {
-                                        halign: 'right',
                                         fontStyle: 'bold'
                                     }
                                 },
                                 {
                                     content: formatCurrency(splittedLines[key].subTotal),
                                     styles: {
-                                        halign: 'right',
                                         fontStyle: 'bold'
                                     }
                                 }]);
                             }
                         }
-
                         break;
                     }
                     case 2: {
@@ -470,7 +468,8 @@
                     styles: {
                         halign: 'left',
                         fillColor: env.yellowBox,
-                        textColor: env.grayText
+                        textColor: env.grayText,
+                        fontStyle: 'bold'
                     }
                 },
                 {
@@ -479,7 +478,8 @@
                     styles: {
                         halign: 'right',
                         fillColor: env.yellowBox,
-                        textColor: env.grayText
+                        textColor: env.grayText,
+                        fontStyle: 'bold'
                     }
                 },
                 {
@@ -550,7 +550,9 @@
                     styles: {
                         halign: 'center',
                         fontStyle: 'bold',
-                        fillColor: env.grayBox
+                        fillColor: env.grayBox,
+                        fontSize: env.fontSizeTitle,
+                        cellPadding: 1
                     }
                 }]);
                 body.push([{
@@ -559,14 +561,17 @@
                     styles: {
                         halign: 'left',
                         fontStyle: 'bold',
-                        textColor: env.redText
+                        textColor: env.redText,
+                        cellPadding: 0.1
+
                     }
                 }]);
                 body.push([{
                     content: 'Paiement par télébanque: Veuillez indiquer le n° de facture. Merci',
                     colSpan: 5,
                     styles: {
-                        halign: 'left'
+                        halign: 'left',
+                        cellPadding: 0.1
                     }
                 }]);
                 body.push([{
@@ -575,7 +580,8 @@
                     styles: {
                         halign: 'right',
                         fontStyle: 'bold',
-                        textColor: env.redText
+                        textColor: env.redText,
+                        cellPadding: 0.1
                     }
                 }]);
 
@@ -634,6 +640,7 @@
                 theme: env.theme,
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSizeSecondary,
                 },
                 columnStyles: {
                     2: {
@@ -655,7 +662,7 @@
                         theme: env.theme,
                         styles: {
                             font: env.font,
-                            fontSize: env.footerFontSize,
+                            fontSize: env.fontSizeFooter,
                             cellPadding: env.footerPadding,
                         },
                         body: getFooter()
@@ -680,7 +687,7 @@
                 theme: env.theme,
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSize
+                    fontSize: env.fontSizeSecondary
                 },
                 columnStyles: {
                     2: {
@@ -710,6 +717,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
@@ -735,6 +743,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
@@ -762,6 +771,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
@@ -792,6 +802,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
@@ -815,7 +826,7 @@
             });
 
             //Bank acc + price A FAIRE fonction 
-            pdf.setFontSize(10);
+            pdf.setFontSize(11);
             pdf.text(bill.bank.account, 42, env.startBVR_Acc);
             pdf.text('' + bill.total, 17, env.startBVR_Tot);
 
@@ -832,6 +843,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
@@ -875,6 +887,7 @@
                 },
                 styles: {
                     font: env.font,
+                    fontSize: env.fontSize,
                     cellPadding: env.cellPadding,
                 },
                 body: [
