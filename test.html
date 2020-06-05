@@ -9,7 +9,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <!-- https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html -->
-    <!-- <script type="text/javascript" src="OCR-normal.js"></script> -->
+    <script type="text/javascript" src="OCR_BB-normal.js"></script>
     <script type="text/javascript" src="roboto-normal.js"></script>
     <script type="text/javascript" src="roboto-italic.js"></script>
     <script type="text/javascript" src="roboto-bold.js"></script>
@@ -61,7 +61,7 @@
                 lines: [
                     { description: 'Licence BitTitan MigrationWiz', type: 2, price: 20, quantity: 65, total: 1300 },
                     { description: 'Prémigration', type: 3, price: 150, quantity: 28, total: 4200 },
-                    { description: '1Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
+                    { description: '1Migration individuelle des emails', type: 1, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: '2Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: '3Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
                     { description: '4Migration individuelle des emails', type: 3, price: 112.5, quantity: 65, total: 7312.5 },
@@ -88,7 +88,7 @@
                 totalWoTVA: 15212.5,
                 totalTVA: 1171.36,
                 total: 16383.85,
-                serial: '0100016383858>102139000002161579200301740+ 010015029'
+                serial: '0100016383858>102139000002161579200301740+ 010015029>'
             };
 
             let splittedLines = {
@@ -102,9 +102,10 @@
             //environment data (margin = posX / start = posY)
             let env = {
                 font: 'roboto',
-                fontBVR: 'roboto',
+                fontBVR: 'OCR_BB',
                 fontSize: 10,
                 fontSizeTitle: 11,
+                fontSizeBVR: 11,
                 fontSizeSecondary: 9,
                 fontSizeFooter: 7,
                 theme: 'plain',
@@ -112,38 +113,41 @@
                 cellPadding: 0.2,
                 footerPadding: 0.1,
                 marginLeft: 15,
-                marginBottom: 40,
+                marginBottom: 30,
+                //margin left of elements :
                 marginNoBill: 155,
                 marginNoClient: 117,
                 marginBVR: 5,
                 marginBVR2: 65,
-                marginBVR3: 125,
-                marginSerial: 90,
-                marginTot: 55,
-                marginTot2: 116,
+                marginBVR3: 130,
+                marginSerial: 80,
+                marginTot: 54.5,
+                marginTot2: 115.5,
                 marginAcc: 41,
                 marginAcc2: 102,
+                //pos Y of elements
                 startHeader: 15,
+                startFooter: 20, //= page max size - startFooter
                 startAdress: 50,
-                startMainTable: 87,
+                startMainTable: 85,
                 startNoClient: 75,
-                startBVR_Bank: 200,
+                startBVR_Bank: 201,
                 startBVR_CInfo: 214,
-                startBVR_Acc: 235,
-                startBVR_Tot: 240,
-                startBVR_Cli: 255,
-                startBVR_Ref: 225,
+                startBVR_Acc: 238,
+                startBVR_Tot: 245.5,
+                startBVR_Cli: 254,
+                startBVR_Ref: 228.5,
                 startBVR_Cli2: 245,
-                startBVR_Serial: 278,
+                startBVR_Serial: 281,
                 logoHeight: 22,
                 logoWidth: 71,
                 cellHeight: 6,
                 grayText: '#999999',
                 blueText: '#1750a0',
-                redText: '#FF1A1A',
-                yellowBox: '#feffbe',
-                grayBox: [192, 192, 192],
-                softGrayBox: [220, 220, 220]
+                redText: '#ff3b3b',
+                yellowBox: '#ffffc4',
+                grayBox: '#d2d2d2',
+                softGrayBox: '#ececec'
             };
 
             /************
@@ -464,7 +468,10 @@
                 //total box
                 body.push([{
                     content: '',
-                    colSpan: 5
+                    colSpan: 5,
+                    styles: {
+                        cellPadding: 0,
+                    }
                 }]);
                 body.push([{
                     //yellow box
@@ -546,7 +553,10 @@
                 //info box
                 body.push([{
                     content: '',
-                    colSpan: 5
+                    colSpan: 5,
+                    styles: {
+                        cellPadding: 0,
+                    }
                 }]);
                 body.push([{
                     content: 'Informations',
@@ -567,7 +577,6 @@
                         fontStyle: 'bold',
                         textColor: env.redText,
                         cellPadding: 0.1
-
                     }
                 }]);
                 body.push([{
@@ -628,16 +637,16 @@
             }
 
             //print total for BVR
-            function makeBVRTot(posX,posY,tot){
+            function makeBVRTot(posX, posY, tot) {
                 let arrayTot = [];
-                tot = ''+tot;
+                tot = '' + tot;
                 arrayTot = tot.match(/.{1}/g);
                 arrayTot.reverse();
-                if(!arrayTot.includes('.')){
-                    posX -= 12;
+                if (!arrayTot.includes('.')) {
+                    posX -= 15;
                 }
                 arrayTot.forEach(i => {
-                    if(i != "."){
+                    if (i != ".") {
                         pdf.text(i, posX, posY);
                     }
                     posX -= 5;
@@ -678,9 +687,12 @@
                 didDrawPage: function (data) {
                     // jsPDF 1.4+ uses getWidth, <1.4 uses .width
                     pdf.autoTable({
-                        startY: pdf.internal.pageSize.height - env.marginBottom + 10,
-                        margin: data.settings.margin.left,
+                        startY: pdf.internal.pageSize.height - env.startFooter,
+                        margin: {
+                            bottom: 0,
+                        },
                         theme: env.theme,
+                        pageBreak: 'avoid',
                         styles: {
                             font: env.font,
                             fontSize: env.fontSizeFooter,
@@ -738,8 +750,8 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSize,
-                    cellPadding: env.cellPadding,
+                    fontSize: env.fontSizeSecondary,
+                    cellPadding: 0
                 },
                 body: [
                     [{
@@ -764,8 +776,8 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSize,
-                    cellPadding: env.cellPadding,
+                    fontSize: env.fontSizeSecondary,
+                    cellPadding: 0,
                 },
                 body: [
                     [{
@@ -792,8 +804,8 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSize,
-                    cellPadding: env.cellPadding,
+                    fontSize: env.fontSizeSecondary,
+                    cellPadding: 0,
                 },
                 body: [
                     [{
@@ -823,8 +835,8 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSize,
-                    cellPadding: env.cellPadding,
+                    fontSize: env.fontSizeSecondary,
+                    cellPadding: 0,
                 },
                 body: [
                     [{
@@ -846,14 +858,7 @@
                 ]
             });
 
-            //Bank acc + price
-            
-            pdf.setFontSize(env.fontSize);
-            pdf.text(bill.bank.account, env.marginAcc, env.startBVR_Acc);
-            makeBVRTot(env.marginTot, env.startBVR_Tot, bill.total);
 
-            pdf.text(bill.bank.account, env.marginAcc2, env.startBVR_Acc);
-            makeBVRTot(env.marginTot2, env.startBVR_Tot, bill.total);
 
             //Client data
             pdf.autoTable({
@@ -865,8 +870,8 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSizeSecondary,
-                    cellPadding: env.cellPadding,
+                    fontSize: env.fontSizeSecondary-1,
+                    cellPadding: 0,
                 },
                 body: [
                     [{
@@ -899,8 +904,6 @@
                     }]
                 ]
             });
-
-            pdf.text(env.marginBVR3, env.startBVR_Ref, '' + bill.bank.ref);
             pdf.autoTable({
                 startY: env.startBVR_Cli2,
                 theme: env.theme,
@@ -911,7 +914,7 @@
                 styles: {
                     font: env.font,
                     fontSize: env.fontSize,
-                    cellPadding: env.cellPadding,
+                    cellPadding: 0,
                 },
                 body: [
                     [{
@@ -939,9 +942,20 @@
                 ]
             });
 
-            //BVR Serial
+            //BVR Data with OCR Font
             pdf.setFont(env.fontBVR);
+            //Bank acc
+            pdf.setFontSize(env.fontSizeSecondary);
+            pdf.text(bill.bank.account, env.marginAcc, env.startBVR_Acc);
+            pdf.text(bill.bank.account, env.marginAcc2, env.startBVR_Acc);
+            //ref + serial
+            pdf.text(env.marginBVR3, env.startBVR_Ref, '' + bill.bank.ref);
+            pdf.setFontSize(env.fontSizeBVR);
             pdf.text(env.marginSerial, env.startBVR_Serial, '' + bill.serial);
+            //Total
+            pdf.setFontSize(env.fontSize);
+            makeBVRTot(env.marginTot, env.startBVR_Tot, bill.total);
+            makeBVRTot(env.marginTot2, env.startBVR_Tot, bill.total);
 
             //generate page
             var string = pdf.output("datauristring");
