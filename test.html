@@ -156,6 +156,7 @@
             //format currency
             function formatCurrency(currency) {
                 currency = new Intl.NumberFormat("de-CH", { style: 'currency', currency: 'CHF' }).format(currency);
+                currency = `${currency.replace("CHF","")} CHF`;
 
                 return currency
             };
