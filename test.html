@@ -8,14 +8,13 @@
     <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <!-- https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html -->
-    <script type="text/javascript" src="OCR_BB-normal.js"></script>
-    <script type="text/javascript" src="roboto-normal.js"></script>
-    <script type="text/javascript" src="roboto-italic.js"></script>
-    <script type="text/javascript" src="roboto-bold.js"></script>
-    <script type="text/javascript" src="roboto-bolditalic.js"></script>
+    <script type="text/javascript" src="assets/scripts/OCR_BB-normal.js"></script>
+    <script type="text/javascript" src="assets/scripts/roboto-normal.js"></script>
+    <script type="text/javascript" src="assets/scripts/roboto-italic.js"></script>
+    <script type="text/javascript" src="assets/scripts/roboto-bold.js"></script>
+    <script type="text/javascript" src="assets/scripts/roboto-bolditalic.js"></script>
     <!-- Logo en base 64 -->
-    <script type="text/javascript" src="logoBase64.js"></script>
+    <script type="text/javascript" src="assets/scripts/logoBase64.js"></script>
 </head>
 
 <body style="height: 100%;">
@@ -156,7 +155,7 @@
             //format currency
             function formatCurrency(currency) {
                 currency = new Intl.NumberFormat("de-CH", { style: 'currency', currency: 'CHF' }).format(currency);
-                currency = `${currency.replace("CHF","")} CHF`;
+                currency = `${currency.replace("CHF", "")} CHF`;
 
                 return currency
             };
@@ -871,7 +870,7 @@
                 },
                 styles: {
                     font: env.font,
-                    fontSize: env.fontSizeSecondary-1,
+                    fontSize: env.fontSizeSecondary - 1,
                     cellPadding: 0,
                 },
                 body: [
