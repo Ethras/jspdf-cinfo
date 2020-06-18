@@ -13,11 +13,17 @@
     <script type="text/javascript" src="assets/scripts/roboto-italic.js"></script>
     <script type="text/javascript" src="assets/scripts/roboto-bold.js"></script>
     <script type="text/javascript" src="assets/scripts/roboto-bolditalic.js"></script>
+    <script type="text/javascript" src="assets/scripts/qrcode.js"></script>
     <!-- Logo en base 64 -->
     <script type="text/javascript" src="assets/scripts/logoBase64.js"></script>
+    <script type="text/javascript" src="assets/scripts/crossBase64.js"></script>
 </head>
 
 <body style="height: 100%;">
+
+    <div>
+        <div id="qrcode"></div>
+    </div>
     <iframe frameborder="1" width="100%" height="100%"></iframe>
     <script>
         $(document).ready(function () {
@@ -55,7 +61,8 @@
                     name: 'Banque Contonale du Valais',
                     city: '1951 Sion',
                     account: '01-1502-9',
-                    ref: '10 21390 00002 16157 92003 01740'
+                    ref: '10 21390 00002 16157 92003 01740',
+                    iban: 'CH58 0079 1123 0008 8901 2'
                 },
                 lines: [
                     { description: 'Licence BitTitan MigrationWiz', type: 2, price: 20, quantity: 65, total: 1300 },
@@ -113,6 +120,9 @@
                 footerPadding: 0.1,
                 marginLeft: 15,
                 marginBottom: 30,
+                bvr: {
+
+                },
                 //margin left of elements :
                 marginNoBill: 155,
                 marginNoClient: 117,
@@ -138,6 +148,29 @@
                 startBVR_Ref: 228.5,
                 startBVR_Cli2: 245,
                 startBVR_Serial: 281,
+                eBill: {
+                    font: 'Helvetica',
+                    fontSizeTitle: 11,
+                    fontSize: 9,
+                    startXReceipt: 5,
+                    startXQR: 67,
+                    startXInfos: 118,
+                    startYTitle: 197,
+                    startYReceiptInfos: 204,
+                    startYTotal: 260,
+                    startYDeposit: 274,
+                    startYQR: 209,
+                    startYQRTotal: 260,
+                    startYAdditionalInfos: 282,
+                    widthReceipt: 52,
+                    widthQRInfos: 87,
+                    padding: 0,
+                    paddingTop: 5,
+                    widthQR: 46,
+                    heightQR: 46,
+                    widthCross: 7,
+                    heightCross: 7
+                },
                 logoHeight: 22,
                 logoWidth: 71,
                 cellHeight: 6,
@@ -148,6 +181,10 @@
                 grayBox: '#d2d2d2',
                 softGrayBox: '#ececec'
             };
+
+            //Position of cross in QR
+            var crossXpos = env.eBill.startXQR + (env.eBill.widthQR / 2) - (env.eBill.widthCross / 2);
+            var crossYpos = env.eBill.startYQR + (env.eBill.heightQR / 2) - (env.eBill.heightCross / 2);
 
             /************
             * FUNCTIONS *
@@ -702,6 +739,249 @@
                     });
                 }
             });
+
+            pdf.addPage();
+
+            /**********
+            * QR Code * 
+            ***********/
+
+            getHeader();
+
+            pdf.autoTable({
+                startY: env.startMainTable,
+                margin: {
+                    left: env.marginLeft,
+                },
+                theme: env.theme,
+                styles: {
+                    font: env.font,
+                    fontSize: env.fontSizeSecondary
+                },
+                columnStyles: {
+                    2: {
+                        halign: 'right'
+                    },
+                    3: {
+                        halign: 'center'
+                    },
+                    4: {
+                        halign: 'right'
+                    }
+                },
+                body: getData(2)
+            });
+
+            //Generate QR Code and get base 64 img from it
+            var qrcode = new QRCode(document.getElementById("qrcode"), {});
+            qrcode.makeCode(bill.bank.ref);
+            var elementBase64 = qrcode.getBase64();
+
+            //both titles
+            pdf.setFont(env.eBill.font);
+            pdf.setFontSize(env.eBill.fontSizeTitle);
+            pdf.setFontStyle('bold');
+            pdf.text("Récépissé", env.eBill.startXReceipt, env.eBill.startYTitle);
+            pdf.text("Section Paiement", env.eBill.startXQR, env.eBill.startYTitle);
+            pdf.setFontStyle('normal');
+            pdf.setFontSize(env.eBill.fontSize);
+            //receipt infos
+            pdf.autoTable({
+                startY: env.eBill.startYReceiptInfos,
+                theme: env.theme,
+                tableWidth: env.eBill.widthReceipt,
+                margin: {
+                    left: env.eBill.startXReceipt
+                },
+                styles: {
+                    font: env.eBill.font,
+                    fontSize: env.eBill.fontSize,
+                    cellPadding: env.eBill.padding,
+                },
+                body: [
+                    [{
+                        content: "Compte / Payable à",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: bill.bank.iban + "\n"
+                            + bill.cinfo.name + "\n"
+                            + bill.cinfo.street + "\n"
+                            + bill.cinfo.city
+                    }],
+                    [{
+                        content: "Payable par",
+                        styles: {
+                            fontStyle: 'bold',
+                            cellPadding: {
+                                top: env.eBill.paddingTop
+                            }
+                        }
+                    }],
+                    [{
+                        content: bill.client.name + "\n" +
+                            bill.client.street + "\n" +
+                            bill.client.city
+                    }],
+                ]
+            });
+
+            //receipt Total
+            pdf.autoTable({
+                startY: env.eBill.startYTotal,
+                theme: env.theme,
+                tableWidth: env.eBill.widthReceipt,
+                margin: {
+                    left: env.eBill.startXReceipt
+                },
+                styles: {
+                    font: env.eBill.font,
+                    fontSize: env.eBill.fontSize,
+                    cellPadding: env.eBill.padding,
+                },
+                body: [
+                    [{
+                        content: "Monnaie",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {
+                        content: "Montant",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: "CHF"
+                    }, {
+                        content: bill.total
+                    }]
+                ]
+            });
+
+            //QR Total
+            pdf.autoTable({
+                startY: env.eBill.startYTotal,
+                theme: env.theme,
+                tableWidth: env.eBill.widthReceipt,
+                margin: {
+                    left: env.eBill.startXQR
+                },
+                styles: {
+                    font: env.eBill.font,
+                    fontSize: env.eBill.fontSize,
+                    cellPadding: env.eBill.padding,
+                },
+                body: [
+                    [{
+                        content: "Monnaie",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    },
+                    {
+                        content: "Montant",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: "CHF"
+                    }, {
+                        content: bill.total
+                    }]
+                ]
+            });
+
+            //Deposit
+            pdf.autoTable({
+                startY: env.eBill.startYDeposit,
+                theme: env.theme,
+                tableWidth: env.eBill.widthReceipt,
+                margin: {
+                    left: env.eBill.startXReceipt
+                },
+                styles: {
+                    font: env.eBill.font,
+                    fontSize: env.eBill.fontSize,
+                    cellPadding: env.eBill.padding,
+                },
+                body: [
+                    [{
+                        content: "Point de dépôt",
+                        styles: {
+                            fontStyle: 'bold',
+                            halign: 'right'
+                        }
+                    }]
+                ]
+            });
+
+            //QR Infos
+            pdf.autoTable({
+                startY: env.eBill.startYTitle,
+                theme: env.theme,
+                tableWidth: env.eBill.widthQRInfos,
+                margin: {
+                    left: env.eBill.startXInfos
+                },
+                styles: {
+                    font: env.eBill.font,
+                    fontSize: env.eBill.fontSize,
+                    cellPadding: env.eBill.padding,
+                },
+                body: [
+                    [{
+                        content: "Compte / Payable à",
+                        styles: {
+                            fontStyle: 'bold'
+                        }
+                    }],
+                    [{
+                        content: bill.bank.iban + "\n"
+                            + bill.cinfo.name + "\n"
+                            + bill.cinfo.street + "\n"
+                            + bill.cinfo.city
+                    }],
+                    [{
+                        content: "Informations supplémentaires",
+                        styles: {
+                            fontStyle: 'bold',
+                            cellPadding: {
+                                top: env.eBill.paddingTop
+                            }
+                        }
+                    }],
+                    [{
+                        content: "Facture n° "+bill.id
+                    }],
+                    [{
+                        content: "Payable par",
+                        styles: {
+                            fontStyle: 'bold',
+                            cellPadding: {
+                                top: env.eBill.paddingTop
+                            }
+                        }
+                    }],
+                    [{
+                        content: bill.client.name + "\n" +
+                            bill.client.street + "\n" +
+                            bill.client.city
+                    }],
+                ]
+            });
+
+            //QR additional infos
+            pdf.text("", env.eBill.startXQR, env.eBill.startYAdditionalInfos);
+
+            //QR+Cross
+            pdf.addImage(elementBase64, 'png', env.eBill.startXQR, env.eBill.startYQR, env.eBill.widthQR, env.eBill.heightQR);
+            pdf.addImage(crossImg, 'png', crossXpos, crossYpos, env.eBill.widthCross, env.eBill.heightCross);
+            $("#qrcode").hide();
 
             pdf.addPage();
 

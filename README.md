@@ -19,6 +19,6 @@ https://developer.tizen.org/community/tip-tech/creating-pdf-documents-jspdf
 
 https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html
 
-# QR code
+# QR code (+ajout fonction getBase64!!)
 
-https://github.com/datalog/qrcode-svg
+https://github.com/davidshimjs/qrcodejs
